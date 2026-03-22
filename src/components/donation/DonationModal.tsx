@@ -44,7 +44,7 @@ export default function DonationModal({ isOpen, onClose, orgContract, orgName }:
   };
 
   const numAmount = Number(amountUsd);
-  const isValidAmount = !isNaN(numAmount) && numAmount >= 0.5;
+  const isValidAmount = !isNaN(numAmount) && numAmount >= 0.01;
   const isConnected = role !== "visitor" && !!address;
 
   return (
