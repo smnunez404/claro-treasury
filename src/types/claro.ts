@@ -309,3 +309,28 @@ export interface QFRoundFull {
 export type DisburseStep = "idle" | "confirming" | "success" | "error";
 
 export type CreateGrantStep = "idle" | "confirming" | "success" | "error";
+
+export interface AdminOrgRow {
+  contract_address: string;
+  owner_address: string;
+  name: string;
+  country: string;
+  description: string | null;
+  verified: boolean;
+  verified_at: string | null;
+  created_at: string;
+  transparency_score: number;
+  total_received_usd: number;
+  total_donors: number;
+}
+
+export interface ProtocolGlobalStats {
+  totalOrgs: number;
+  verifiedOrgs: number;
+  pendingOrgs: number;
+  totalTransactions: number;
+  totalRaisedUsd: number;
+  totalDonors: number;
+}
+
+export type VerifyStep = "idle" | "confirming" | "success" | "error";

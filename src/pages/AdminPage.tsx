@@ -1,114 +1,84 @@
-import { useQuery } from "@tanstack/react-query";
-import { supabase } from "@/lib/supabaseClient";
-import { truncateAddress, SNOWTRACE_URL } from "@/lib/constants";
-import { Building2, AlertCircle, ExternalLink } from "lucide-react";
-
-interface AdminOrg {
-  contract_address: string;
-  name: string;
-  country: string;
-  verified: boolean;
-  owner_address: string;
-  created_at: string | null;
-}
+import { useState } from "react";
+import { RefreshCw, ShieldCheck } from "lucide-react";
+import { useAdmin } from "@/hooks/useAdmin";
+import AdminStatsBar from "@/components/admin/AdminStatsBar";
+import OrgAdminTable from "@/components/admin/OrgAdminTable";
+import VerifyOrgModal from "@/components/admin/VerifyOrgModal";
+import AdminSkeleton from "@/components/admin/AdminSkeleton";
+import type { AdminOrgRow } from "@/types/claro";
 
 export default function AdminPage() {
-  const { data, isLoading, isError, refetch } = useQuery({
-    queryKey: ["admin-orgs"],
-    queryFn: async () => {
-      const { data, error } = await supabase
-        .from("claro_organizations")
-        .select("contract_address, name, country, verified, owner_address, created_at")
-        .eq("is_active", true)
-        .order("created_at", { ascending: false });
-      if (error) throw error;
-      return data as AdminOrg[];
-    },
-  });
+  const {
+    orgs,
+    globalStats,
+    isOrgsLoading,
+    isStatsLoading,
+    verifyStep,
+    verifyError,
+    verifyingAddress,
+    verifyOrganization,
+    resetVerify,
+    isSyncing,
+    syncOrganizations,
+  } = useAdmin();
+
+  const [verifyTarget, setVerifyTarget] = useState<AdminOrgRow | null>(null);
+
+  if (isOrgsLoading) return <AdminSkeleton />;
 
   return (
-    <div>
-      <h1 className="text-2xl font-semibold text-foreground">Organizations</h1>
-      <p className="text-sm text-muted-foreground">All organizations registered in CLARO Protocol</p>
-
-      {isLoading && (
-        <div className="mt-6 space-y-3">
-          {[1, 2, 3].map((i) => (
-            <div key={i} className="flex gap-4">
-              {[1, 2, 3, 4, 5].map((j) => (
-                <div key={j} className="animate-pulse h-4 rounded bg-muted flex-1" />
-              ))}
-            </div>
-          ))}
+    <div className="bg-gray-50 min-h-screen">
+      {/* Header */}
+      <div className="px-4 pt-6 pb-2 md:px-8 flex items-start justify-between flex-wrap gap-3">
+        <div>
+          <h1 className="text-2xl font-semibold text-gray-900">Organizations</h1>
+          <p className="text-sm text-gray-500 mt-1">CLARO Protocol Admin</p>
         </div>
-      )}
 
-      {isError && (
-        <div className="bg-red-50 border border-red-200 rounded-md p-4 flex items-center gap-3 mt-6">
-          <AlertCircle className="text-destructive" style={{ width: 20, height: 20 }} />
-          <span className="text-sm">Could not load organizations.</span>
-          <button onClick={() => refetch()} className="ml-auto text-sm font-medium text-primary hover:underline">
-            Retry
+        <div className="flex items-center gap-3">
+          <button
+            onClick={syncOrganizations}
+            disabled={isSyncing}
+            className="border border-gray-300 bg-white text-gray-700 hover:bg-gray-50 rounded-md px-4 py-2 text-sm flex items-center gap-2 active:scale-[0.97] transition-all disabled:opacity-50"
+          >
+            <RefreshCw size={14} className={isSyncing ? "animate-spin" : ""} />
+            {isSyncing ? "Syncing..." : "Sync Blockchain"}
           </button>
-        </div>
-      )}
 
-      {data && data.length === 0 && (
-        <div className="flex flex-col items-center py-16 text-center">
-          <Building2 className="text-gray-300" style={{ width: 48, height: 48 }} />
-          <p className="text-sm font-semibold text-foreground mt-4">No organizations registered yet on-chain.</p>
+          <div className="bg-[#0A0E1A] text-white text-xs px-3 py-2 rounded-md flex items-center gap-2">
+            <ShieldCheck size={14} className="text-[#1A56DB]" />
+            Protocol Admin
+          </div>
         </div>
-      )}
+      </div>
 
-      {data && data.length > 0 && (
-        <div className="overflow-x-auto mt-6">
-          <table className="w-full">
-            <thead>
-              <tr className="bg-muted border-b border-border">
-                {["Organization", "Contract", "Owner", "Status", "Registered"].map((h) => (
-                  <th key={h} className="text-xs font-medium text-muted-foreground uppercase tracking-wider px-6 py-3 text-left">
-                    {h}
-                  </th>
-                ))}
-              </tr>
-            </thead>
-            <tbody>
-              {data.map((org) => (
-                <tr key={org.contract_address} className="border-b border-muted hover:bg-muted/50 text-sm">
-                  <td className="px-6 py-3">
-                    <p className="font-medium text-foreground">{org.name}</p>
-                    <p className="text-xs text-muted-foreground">{org.country}</p>
-                  </td>
-                  <td className="px-6 py-3">
-                    <a
-                      href={`${SNOWTRACE_URL}/address/${org.contract_address}`}
-                      target="_blank"
-                      rel="noopener noreferrer"
-                      className="font-mono text-xs text-muted-foreground hover:text-primary inline-flex items-center gap-1"
-                    >
-                      {truncateAddress(org.contract_address)}
-                      <ExternalLink style={{ width: 12, height: 12 }} />
-                    </a>
-                  </td>
-                  <td className="px-6 py-3 font-mono text-xs text-muted-foreground">
-                    {truncateAddress(org.owner_address)}
-                  </td>
-                  <td className="px-6 py-3">
-                    {org.verified ? (
-                      <span className="bg-green-50 text-green-700 border border-green-200 text-xs px-2 py-0.5 rounded-full">Verified</span>
-                    ) : (
-                      <span className="bg-amber-50 text-amber-700 border border-amber-200 text-xs px-2 py-0.5 rounded-full">Pending</span>
-                    )}
-                  </td>
-                  <td className="px-6 py-3 text-xs text-muted-foreground">
-                    {org.created_at ? new Date(org.created_at).toLocaleDateString() : "--"}
-                  </td>
-                </tr>
-              ))}
-            </tbody>
-          </table>
-        </div>
-      )}
+      {/* Content */}
+      <div className="px-4 pb-8 md:px-8 space-y-6 mt-4">
+        <AdminStatsBar stats={globalStats} isLoading={isStatsLoading} />
+
+        <OrgAdminTable
+          orgs={orgs ?? []}
+          isLoading={isOrgsLoading}
+          verifyingAddress={verifyingAddress}
+          onVerify={(org) => setVerifyTarget(org)}
+        />
+      </div>
+
+      <VerifyOrgModal
+        org={verifyTarget}
+        isOpen={verifyTarget !== null}
+        onClose={() => {
+          setVerifyTarget(null);
+          resetVerify();
+        }}
+        verifyStep={verifyStep}
+        verifyError={verifyError}
+        onConfirm={() => verifyOrganization(verifyTarget!.contract_address)}
+        onSuccess={() => {
+          setVerifyTarget(null);
+          resetVerify();
+        }}
+      />
     </div>
   );
 }
