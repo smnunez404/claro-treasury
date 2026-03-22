@@ -334,3 +334,24 @@ export interface ProtocolGlobalStats {
 }
 
 export type VerifyStep = "idle" | "confirming" | "success" | "error";
+
+export type RegisterStep =
+  | "form"
+  | "balance"
+  | "deploying"
+  | "success"
+  | "error";
+
+export interface RegisterFormData {
+  name: string;
+  country: string;
+  description: string;
+  contact_email: string;
+  website: string;
+}
+
+export interface DeployResult {
+  contractAddress: string;
+  txHash: string;
+  orgName: string;
+}
