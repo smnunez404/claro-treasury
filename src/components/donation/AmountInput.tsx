@@ -21,7 +21,7 @@ export default function AmountInput({ value, onChange, orgName, disabled }: Prop
         <span className="absolute left-3 top-1/2 -translate-y-1/2 text-muted-foreground text-sm font-medium">$</span>
         <input
           type="number"
-          min="0.50"
+          min="0.01"
           step="0.01"
           placeholder="5.00"
           value={value}
