@@ -21,24 +21,32 @@ export default function ProjectCard({ project }: Props) {
 
   return (
     <div className="bg-white border border-gray-200 rounded-xl p-5 hover:shadow-md transition-shadow duration-200">
-      <div className="flex items-start justify-between">
+      <div className="flex items-start justify-between gap-2">
         <p className="text-sm font-semibold text-gray-900">{project.name}</p>
-        <span className={`border ${s.bg} ${s.text} text-xs px-2 py-0.5 rounded-full whitespace-nowrap`}>
-          {s.label}
-        </span>
-        {project.hypercert_tx_hash && (
-          <a
-            href={`https://sepolia.basescan.org/tx/${project.hypercert_tx_hash}`}
-            target="_blank"
-            rel="noopener noreferrer"
-            onClick={(e) => e.stopPropagation()}
-            className="inline-flex items-center gap-1 bg-amber-50 border border-amber-200 text-amber-700 text-xs px-2 py-0.5 rounded-full hover:bg-amber-100 transition-colors"
-            title="Impact certified on Base Sepolia · Click to verify"
-          >
-            <Award size={10} />
-            View Certificate
-          </a>
-        )}
+        <div className="flex items-center gap-1.5 shrink-0">
+          <span className={`border ${s.bg} ${s.text} text-xs px-2 py-0.5 rounded-full whitespace-nowrap`}>
+            {s.label}
+          </span>
+          {project.hypercert_tx_hash && (
+            <>
+              <a
+                href={`https://sepolia.basescan.org/tx/${project.hypercert_tx_hash}`}
+                target="_blank"
+                rel="noopener noreferrer"
+                onClick={(e) => e.stopPropagation()}
+                className="inline-flex items-center gap-1 bg-amber-50 border border-amber-200 text-amber-700 text-xs px-2 py-0.5 rounded-full hover:bg-amber-100 transition-colors"
+                title="Impact certified on Base Sepolia · Click to verify"
+              >
+                <Award size={10} />
+                View Certificate
+              </a>
+              <span className="inline-flex items-center gap-1 bg-green-50 border border-green-200 text-green-700 text-xs px-2 py-0.5 rounded-full whitespace-nowrap">
+                <Award size={10} />
+                Certified
+              </span>
+            </>
+          )}
+        </div>
       </div>
 
       {project.description && (
