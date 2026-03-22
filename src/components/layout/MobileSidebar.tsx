@@ -5,9 +5,9 @@ import { useAuth } from "@/contexts/AuthContext";
 import { supabase } from "@/lib/supabaseClient";
 import { truncateAddress } from "@/lib/constants";
 import { Sheet, SheetContent, SheetTrigger } from "@/components/ui/sheet";
+import claroLogoLight from "/claro-logo-light.png";
 import {
   Menu,
-  Shield,
   LayoutDashboard,
   Building,
   Users,
