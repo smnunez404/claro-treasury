@@ -1,7 +1,6 @@
 import { useState, useCallback } from "react";
 import { ethers } from "ethers";
 import { useWallets } from "@privy-io/react-auth";
-import { supabase } from "@/integrations/supabase/client";
 import { AVAX_TO_USD, CHAIN_ID } from "@/lib/constants";
 import { YAIS_TREASURY_ABI } from "@/lib/abis";
 import type { DonationStep, DonationTarget } from "@/types/claro";
@@ -46,38 +45,31 @@ export function useDonation() {
       const hash = receipt?.hash ?? txResponse.hash;
       setTxHash(hash);
 
-      // Best-effort DB logging
-      const donorAddress = (await signer.getAddress()).toLowerCase();
-
+      // 6. Log to Supabase via Edge Function (service_role — always works)
       try {
-        await supabase.from("claro_transactions").insert({
-          tx_hash: hash,
-          tx_type: target.projectId ? "grant_deposit" : "treasury_deposit",
-          from_address: donorAddress,
-          to_address: target.orgContract.toLowerCase(),
-          amount_avax: amountAvax,
-          amount_usd: amountUsd,
-          contract_address: target.orgContract.toLowerCase(),
-          org_contract: target.orgContract.toLowerCase(),
-          onchain_project_id: target.projectId ?? null,
-          network: "avalanche-fuji",
-        });
-      } catch (dbError) {
-        console.error("DB log failed (non-blocking):", dbError);
-      }
-
-      try {
-        await supabase.from("claro_donations").insert({
-          tx_hash: hash,
-          org_contract: target.orgContract.toLowerCase(),
-          onchain_project_id: target.projectId ?? null,
-          donor_address: donorAddress,
-          amount_avax: amountAvax,
-          amount_usd: amountUsd,
-          is_anonymous: false,
-        });
-      } catch (dbError) {
-        console.error("Donations log failed (non-blocking):", dbError);
+        const donorAddress = await signer.getAddress();
+        await fetch(
+          `${import.meta.env.VITE_SUPABASE_URL}/functions/v1/log-donation`,
+          {
+            method: "POST",
+            headers: {
+              "Content-Type": "application/json",
+              "Authorization": `Bearer ${import.meta.env.VITE_SUPABASE_PUBLISHABLE_KEY}`,
+            },
+            body: JSON.stringify({
+              tx_hash: hash,
+              org_contract: target.orgContract,
+              donor_address: donorAddress.toLowerCase(),
+              amount_avax: amountAvax,
+              amount_usd: amountUsd,
+              onchain_project_id: target.projectId ?? null,
+              is_anonymous: false,
+            }),
+          }
+        );
+      } catch (logError) {
+        // Non-blocking — on-chain tx is confirmed regardless of logging
+        console.error("log-donation Edge Function failed (non-blocking):", logError);
       }
 
       setStep("success");
