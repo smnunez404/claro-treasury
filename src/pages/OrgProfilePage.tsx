@@ -28,6 +28,7 @@ export default function OrgProfilePage() {
   const { contractAddress } = useParams<{ contractAddress: string }>();
   const normalizedAddress = useMemo(() => contractAddress?.toLowerCase() ?? "", [contractAddress]);
   const queryClient = useQueryClient();
+  const [donateOpen, setDonateOpen] = useState(false);
 
   const orgQuery = useQuery({
     queryKey: ["org-profile", normalizedAddress],
