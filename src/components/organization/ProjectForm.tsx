@@ -45,8 +45,8 @@ export default function ProjectForm({ isOpen, onClose, project, orgContractAddre
   const [website_url, setWebsiteUrl] = useState(project?.website_url ?? "");
   const [nameError, setNameError] = useState<string | null>(null);
 
-  // Reset form when project changes
-  useState(() => {
+  // Reset form when project changes or sheet opens
+  useEffect(() => {
     setName(project?.name ?? "");
     setDescription(project?.description ?? "");
     setCategory(project?.category ?? "");
@@ -57,7 +57,7 @@ export default function ProjectForm({ isOpen, onClose, project, orgContractAddre
     setWebsiteUrl(project?.website_url ?? "");
     setNameError(null);
     clearError();
-  });
+  }, [project, isOpen]);
 
   async function handleSubmit() {
     if (!name.trim()) {
