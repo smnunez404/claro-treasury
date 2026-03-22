@@ -71,7 +71,7 @@ export default function HypercertPanel({ grants, orgContract }: Props) {
       await wallet.switchChain(BASE_SEPOLIA_CHAIN_ID);
 
       // 3. Get signer on Base Sepolia
-      const provider = await wallet.getEthersProvider() as ethers.BrowserProvider;
+      const provider = new ethers.BrowserProvider(await wallet.getEthereumProvider());
       const signer = await provider.getSigner();
       const signerAddress = await signer.getAddress();
 
