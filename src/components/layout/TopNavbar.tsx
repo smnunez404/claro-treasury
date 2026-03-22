@@ -2,7 +2,7 @@ import { Link } from "react-router-dom";
 import { usePrivy } from "@privy-io/react-auth";
 import { useAuth } from "@/contexts/AuthContext";
 import { truncateAddress } from "@/lib/constants";
-import { Shield } from "lucide-react";
+import claroLogoDark from "/claro-logo-dark.png";
 
 export default function TopNavbar() {
   const { login } = usePrivy();
@@ -12,7 +12,7 @@ export default function TopNavbar() {
   return (
     <header className="bg-card border-b border-border h-16 flex items-center justify-between px-4 sticky top-0 z-10">
       <Link to="/explore" className="flex items-center gap-2">
-        <Shield className="text-primary" strokeWidth={1.5} />
+        <img src={claroLogoDark} alt="CLARO Protocol" className="h-7 w-7 object-contain" />
         <span className="text-foreground font-semibold text-base">CLARO Protocol</span>
       </Link>
 

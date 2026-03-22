@@ -5,9 +5,9 @@ import { useAuth } from "@/contexts/AuthContext";
 import { supabase } from "@/lib/supabaseClient";
 import { truncateAddress } from "@/lib/constants";
 import { Sheet, SheetContent, SheetTrigger } from "@/components/ui/sheet";
+import claroLogoLight from "/claro-logo-light.png";
 import {
   Menu,
-  Shield,
   LayoutDashboard,
   Building,
   Users,
@@ -64,7 +64,7 @@ export default function MobileSidebar() {
           <SheetContent side="left" className="w-64 p-0 border-0" style={{ backgroundColor: "#0A0E1A" }}>
             {/* Logo */}
             <div className="px-4 py-5 border-b border-gray-800 flex items-center gap-2">
-              <Shield className="text-primary" strokeWidth={1.5} />
+              <img src={claroLogoLight} alt="CLARO Protocol" className="h-7 w-7 object-contain" />
               <span className="text-white font-bold text-lg">CLARO</span>
               <span className="text-gray-400 text-xs">Protocol</span>
             </div>
