@@ -192,8 +192,9 @@ export function useGrants() {
       try {
         const privyWallet = wallets[0];
         await privyWallet.switchChain(CHAIN_ID);
-        const ethersProvider = await privyWallet.getEthersProvider() as ethers.BrowserProvider;
-        const signer = await ethersProvider.getSigner();
+        const eip1193 = await privyWallet.getEthereumProvider();
+        const browserProvider = new ethers.BrowserProvider(eip1193);
+        const signer = await browserProvider.getSigner();
         const contract = new ethers.Contract(orgContractAddress!, YAIS_TREASURY_ABI, signer);
         const tx = await contract.createGrant(projectId, projectName);
         await tx.wait(1);
