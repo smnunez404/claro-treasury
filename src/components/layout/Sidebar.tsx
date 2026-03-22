@@ -3,6 +3,7 @@ import { useQuery } from "@tanstack/react-query";
 import { useAuth } from "@/contexts/AuthContext";
 import { supabase } from "@/lib/supabaseClient";
 import { truncateAddress, SNOWTRACE_URL } from "@/lib/constants";
+import claroLogoLight from "/claro-logo-light.png";
 import {
   LayoutDashboard,
   Building,
@@ -10,7 +11,6 @@ import {
   Gift,
   Compass,
   Building2,
-  Shield,
   MapPin,
   LogOut,
 } from "lucide-react";
