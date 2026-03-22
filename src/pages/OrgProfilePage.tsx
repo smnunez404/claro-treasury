@@ -206,6 +206,13 @@ export default function OrgProfilePage() {
           </div>
         </div>
       </div>
+
+      <DonationModal
+        isOpen={donateOpen}
+        onClose={() => setDonateOpen(false)}
+        orgContract={normalizedAddress}
+        orgName={org?.name ?? "Organization"}
+      />
     </div>
   );
 }
