@@ -202,3 +202,16 @@ export interface DashboardQFRound {
   projectCount: number;
 }
 
+export type DonationStep = "idle" | "selecting" | "confirming" | "success" | "error";
+
+export interface DonationTarget {
+  projectId: string | null;
+  projectName: string;
+  orgContract: string;
+  orgName: string;
+}
+
+export interface ActiveGrant {
+  projectId: string;
+  name: string;
+}
