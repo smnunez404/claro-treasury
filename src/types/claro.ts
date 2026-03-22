@@ -110,6 +110,7 @@ export interface Project {
   image_url: string | null;
   website_url: string | null;
   onchain_project_id: string | null;
+  hypercert_tx_hash: string | null;
 }
 
 export interface Transaction {
