@@ -215,3 +215,55 @@ export interface ActiveGrant {
   projectId: string;
   name: string;
 }
+
+export interface ProjectFormData {
+  name: string;
+  description: string;
+  category: string;
+  status: "active" | "completed" | "on_hold" | "cancelled";
+  target_usd: string;
+  start_date: string;
+  end_date: string;
+  website_url: string;
+}
+
+export interface MilestoneFormData {
+  project_id: string;
+  title: string;
+  description: string;
+  status: "pending" | "in_progress" | "completed" | "delayed";
+  target_date: string;
+  completed_date: string;
+  evidence_url: string;
+  evidence_type: string;
+}
+
+export interface MetricFormData {
+  project_id: string;
+  metric_name: string;
+  metric_value: string;
+  metric_unit: string;
+  period_start: string;
+  period_end: string;
+  evidence_url: string;
+}
+
+export interface TeamMemberFormData {
+  name: string;
+  role: string;
+  bio: string;
+  avatar_url: string;
+  wallet_address: string;
+}
+
+export interface ImpactMetric {
+  id: string;
+  project_id: string | null;
+  metric_name: string;
+  metric_value: number;
+  metric_unit: string | null;
+  period_start: string | null;
+  period_end: string | null;
+  evidence_url: string | null;
+  verified: boolean;
+}
