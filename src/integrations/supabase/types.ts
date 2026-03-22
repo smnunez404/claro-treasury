@@ -948,6 +948,94 @@ export type Database = {
         }
         Relationships: []
       }
+      v_public_donations: {
+        Row: {
+          amount_avax: number | null
+          amount_usd: number | null
+          created_at: string | null
+          donated_at: string | null
+          donor_address: string | null
+          id: string | null
+          is_anonymous: boolean | null
+          message: string | null
+          onchain_project_id: string | null
+          org_contract: string | null
+          project_id: string | null
+          tx_hash: string | null
+        }
+        Insert: {
+          amount_avax?: number | null
+          amount_usd?: number | null
+          created_at?: string | null
+          donated_at?: string | null
+          donor_address?: string | null
+          id?: string | null
+          is_anonymous?: boolean | null
+          message?: string | null
+          onchain_project_id?: string | null
+          org_contract?: string | null
+          project_id?: string | null
+          tx_hash?: string | null
+        }
+        Update: {
+          amount_avax?: number | null
+          amount_usd?: number | null
+          created_at?: string | null
+          donated_at?: string | null
+          donor_address?: string | null
+          id?: string | null
+          is_anonymous?: boolean | null
+          message?: string | null
+          onchain_project_id?: string | null
+          org_contract?: string | null
+          project_id?: string | null
+          tx_hash?: string | null
+        }
+        Relationships: [
+          {
+            foreignKeyName: "claro_donations_org_contract_fkey"
+            columns: ["org_contract"]
+            isOneToOne: false
+            referencedRelation: "claro_organizations"
+            referencedColumns: ["contract_address"]
+          },
+          {
+            foreignKeyName: "claro_donations_org_contract_fkey"
+            columns: ["org_contract"]
+            isOneToOne: false
+            referencedRelation: "v_org_transparency"
+            referencedColumns: ["contract_address"]
+          },
+          {
+            foreignKeyName: "claro_donations_org_contract_fkey"
+            columns: ["org_contract"]
+            isOneToOne: false
+            referencedRelation: "v_public_organizations"
+            referencedColumns: ["contract_address"]
+          },
+          {
+            foreignKeyName: "claro_donations_org_contract_fkey"
+            columns: ["org_contract"]
+            isOneToOne: false
+            referencedRelation: "v_transparency_score"
+            referencedColumns: ["contract_address"]
+          },
+          {
+            foreignKeyName: "claro_donations_project_id_fkey"
+            columns: ["project_id"]
+            isOneToOne: false
+            referencedRelation: "claro_projects"
+            referencedColumns: ["id"]
+          },
+          {
+            foreignKeyName: "claro_donations_tx_hash_fkey"
+            columns: ["tx_hash"]
+            isOneToOne: false
+            referencedRelation: "claro_transactions"
+            referencedColumns: ["tx_hash"]
+          },
+        ]
+      }
       v_public_organizations: {
         Row: {
           contract_address: string | null
