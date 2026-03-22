@@ -2,7 +2,7 @@
 
 **Built at Aleph Hackathon 2026 · Santa Cruz de la Sierra, Bolivia · Powered by Avalanche**
 
-- **Live demo:** [https://treasury.yaislab.org](https://treasury.yaislab.org)
+- **Live demo:** [https://claro.yaislab.org](https://claro.yaislab.org)
 - **Network:** Avalanche Fuji Testnet (Chain ID: 43113)
 - **GitHub:** [https://github.com/smnunez404/yais-treasury-cd48c953](https://github.com/smnunez404/yais-treasury-cd48c953)
 
@@ -55,11 +55,11 @@ Users never see "AVAX" or "gas". Everything is presented in USD.
 
 ### Registered Organizations (Fuji Testnet)
 
-| Organization | Type | Contract | Status |
-|---|---|---|---|
-| YAIS Lab | AI Research | `0xc3Cd64...` | Verified ✅ |
-| Pata Segura | Animal Welfare | `0x13a38c...` | Verified ✅ |
-| Guardianes del Chaco | Environment | Deployed | Pending |
+| Organization         | Type           | Contract      | Status      |
+| -------------------- | -------------- | ------------- | ----------- |
+| YAIS Lab             | AI Research    | `0xc3Cd64...` | Verified ✅ |
+| Pata Segura          | Animal Welfare | `0x13a38c...` | Verified ✅ |
+| Guardianes del Chaco | Environment    | Deployed      | Pending     |
 
 ### Real Activity on Testnet
 
@@ -96,25 +96,25 @@ Organization withdraws funds to their local bank account
 
 ### Deployed on Avalanche Fuji Testnet
 
-| Contract | Address | Explorer |
-|---|---|---|
-| CLAROFactory | `0xc591877C9d3310EdDb83065f5d9C86A9ed69324c` | [Snowtrace](https://testnet.snowtrace.io/address/0xc591877C9d3310EdDb83065f5d9C86A9ed69324c) |
-| CLAROMatching (QF) | `0x32A6dCCb5aA832Cc37be8bdDAAf614F6ae3AFb52` | [Snowtrace](https://testnet.snowtrace.io/address/0x32A6dCCb5aA832Cc37be8bdDAAf614F6ae3AFb52) |
-| YAISTreasury (YAIS Lab) | `0xc3Cd64C2E72F7C122388a452590a659Dc098960a` | [Snowtrace](https://testnet.snowtrace.io/address/0xc3Cd64C2E72F7C122388a452590a659Dc098960a) |
+| Contract                   | Address                                      | Explorer                                                                                     |
+| -------------------------- | -------------------------------------------- | -------------------------------------------------------------------------------------------- |
+| CLAROFactory               | `0xc591877C9d3310EdDb83065f5d9C86A9ed69324c` | [Snowtrace](https://testnet.snowtrace.io/address/0xc591877C9d3310EdDb83065f5d9C86A9ed69324c) |
+| CLAROMatching (QF)         | `0x32A6dCCb5aA832Cc37be8bdDAAf614F6ae3AFb52` | [Snowtrace](https://testnet.snowtrace.io/address/0x32A6dCCb5aA832Cc37be8bdDAAf614F6ae3AFb52) |
+| YAISTreasury (YAIS Lab)    | `0xc3Cd64C2E72F7C122388a452590a659Dc098960a` | [Snowtrace](https://testnet.snowtrace.io/address/0xc3Cd64C2E72F7C122388a452590a659Dc098960a) |
 | YAISTreasury (Pata Segura) | `0x13a38ce79e440a54c02b2066bf57b916054e0a1a` | [Snowtrace](https://testnet.snowtrace.io/address/0x13a38ce79e440a54c02b2066bf57b916054e0a1a) |
 
 ### Deployed on Base Sepolia
 
-| Contract | Address | Explorer |
-|---|---|---|
+| Contract   | Address                                      | Explorer                                                                                    |
+| ---------- | -------------------------------------------- | ------------------------------------------------------------------------------------------- |
 | Hypercerts | `0x822F17A9A5EeCFd66dBAFf7946a8071C265D1d07` | [Basescan](https://sepolia.basescan.org/address/0x822F17A9A5EeCFd66dBAFf7946a8071C265D1d07) |
 
 ### Verified Hypercerts
 
-| Project | Transaction |
-|---|---|
-| AI for Education Bolivia | `0x4fc9f578...` |
-| Buzzbusters | Minted during hackathon |
+| Project                  | Transaction             |
+| ------------------------ | ----------------------- |
+| AI for Education Bolivia | `0x4fc9f578...`         |
+| Buzzbusters              | Minted during hackathon |
 
 ### Contract Architecture
 
@@ -156,20 +156,20 @@ Community support matters more than whale donations — **democratic, not plutoc
 
 ## Tech Stack
 
-| Layer | Technology |
-|---|---|
-| Smart Contracts | Solidity 0.8.20 — Avalanche C-Chain |
-| Quadratic Funding | CLAROMatching — Avalanche C-Chain |
-| Impact Certs | Hypercerts — Base Sepolia |
-| Frontend | React + TypeScript + Vite |
-| Wallet / Auth | Privy (email + Google + MetaMask) |
-| Blockchain reads | ethers.js v6 |
-| Backend | Supabase Edge Functions (Deno) |
-| Database | Supabase PostgreSQL (15 tables, 2 views) |
-| AI Reports | Gemini 2.0 Flash |
-| Off-ramp / On-ramp | Onramper (30+ providers) |
-| RPC | Alchemy / Avalanche public RPC |
-| Deploy | Lovable → treasury.yaislab.org |
+| Layer              | Technology                               |
+| ------------------ | ---------------------------------------- |
+| Smart Contracts    | Solidity 0.8.20 — Avalanche C-Chain      |
+| Quadratic Funding  | CLAROMatching — Avalanche C-Chain        |
+| Impact Certs       | Hypercerts — Base Sepolia                |
+| Frontend           | React + TypeScript + Vite                |
+| Wallet / Auth      | Privy (email + Google + MetaMask)        |
+| Blockchain reads   | ethers.js v6                             |
+| Backend            | Supabase Edge Functions (Deno)           |
+| Database           | Supabase PostgreSQL (15 tables, 2 views) |
+| AI Reports         | Gemini 2.0 Flash                         |
+| Off-ramp / On-ramp | Onramper (30+ providers)                 |
+| RPC                | Alchemy / Avalanche public RPC           |
+| Deploy             | Lovable → treasury.yaislab.org           |
 
 ---
 
@@ -211,6 +211,7 @@ disburseGrant("ai-education-2026", recipient, amount)  ← owner only
 Active rounds where unique donors matter more than donation size. Real-time matching projections visible to all donors. Democratic allocation mechanism.
 
 **Active Round 2 data:**
+
 - Matching pool: 0.03 AVAX
 - 3 projects: AI for Education Bolivia, Buzzbusters, Forest Fire Prevention AI
 - All with unique donors
@@ -243,15 +244,15 @@ Convert AVAX to local currency via Onramper (30+ providers including Stripe and 
 
 Every organization has a public 0–100 score:
 
-| Criterion | Points |
-|---|---|
-| Has description | 10 |
-| Verified by protocol | 20 |
-| Has active projects | 15 |
-| Has on-chain transactions | 20 |
-| Milestones with evidence | 15 |
-| Public documents | 10 |
-| Impact metrics | 10 |
+| Criterion                 | Points |
+| ------------------------- | ------ |
+| Has description           | 10     |
+| Verified by protocol      | 20     |
+| Has active projects       | 15     |
+| Has on-chain transactions | 20     |
+| Milestones with evidence  | 15     |
+| Public documents          | 10     |
+| Impact metrics            | 10     |
 
 Currently: YAIS Lab and Pata Segura at 50/100 (description + verified + transactions).
 Score increases as organizations add projects, milestones, and evidence.
@@ -274,24 +275,24 @@ The Protocol Admin (protocolOwner of CLAROFactory) can:
 
 ### Tables (15 tables + 2 views)
 
-| Table | Purpose |
-|---|---|
-| `claro_organizations` | Organization metadata (complements blockchain) |
-| `claro_projects` | Projects per organization (includes onchain_project_id, hypercert_tx_hash) |
-| `claro_project_updates` | Impact updates per project |
-| `claro_transactions` | On-chain transaction registry |
-| `claro_donations` | Donation records with donor metadata |
-| `claro_reports` | AI-generated transparency reports |
-| `claro_milestones` | Project milestones with evidence links |
-| `claro_documents` | Public documents and evidence |
-| `claro_impact_metrics` | Verifiable impact metrics |
-| `claro_team_members` | Public team per organization |
-| `claro_testimonials` | Verified testimonials |
-| `claro_payment_justifications` | Justification per payment |
-| `claro_audit_log` | Immutable audit trail of all actions |
-| `claro_sync_log` | External sync logs |
-| `v_org_transparency` | Full public view per org (with CTE-based aggregation) |
-| `v_transparency_score` | Transparency score 0–100 per org |
+| Table                          | Purpose                                                                    |
+| ------------------------------ | -------------------------------------------------------------------------- |
+| `claro_organizations`          | Organization metadata (complements blockchain)                             |
+| `claro_projects`               | Projects per organization (includes onchain_project_id, hypercert_tx_hash) |
+| `claro_project_updates`        | Impact updates per project                                                 |
+| `claro_transactions`           | On-chain transaction registry                                              |
+| `claro_donations`              | Donation records with donor metadata                                       |
+| `claro_reports`                | AI-generated transparency reports                                          |
+| `claro_milestones`             | Project milestones with evidence links                                     |
+| `claro_documents`              | Public documents and evidence                                              |
+| `claro_impact_metrics`         | Verifiable impact metrics                                                  |
+| `claro_team_members`           | Public team per organization                                               |
+| `claro_testimonials`           | Verified testimonials                                                      |
+| `claro_payment_justifications` | Justification per payment                                                  |
+| `claro_audit_log`              | Immutable audit trail of all actions                                       |
+| `claro_sync_log`               | External sync logs                                                         |
+| `v_org_transparency`           | Full public view per org (with CTE-based aggregation)                      |
+| `v_transparency_score`         | Transparency score 0–100 per org                                           |
 
 ### Security Model
 
@@ -303,15 +304,15 @@ The Protocol Admin (protocolOwner of CLAROFactory) can:
 
 ### Edge Functions (Deno)
 
-| Function | Purpose |
-|---|---|
-| `generate-report` | Gemini 2.0 Flash transparency report |
-| `sync-organizations` | Sync orgs from CLAROFactory to Supabase |
-| `update-org-profile` | Update org metadata with ownership verification |
-| `org-write` | Centralized write handler (projects, milestones, metrics, team) |
-| `log-donation` | Log on-chain donations to Supabase with service_role |
-| `log-payroll` | Log on-chain payroll to Supabase with service_role |
-| `log-grant-action` | Log grant creation, disbursement, certification |
+| Function             | Purpose                                                         |
+| -------------------- | --------------------------------------------------------------- |
+| `generate-report`    | Gemini 2.0 Flash transparency report                            |
+| `sync-organizations` | Sync orgs from CLAROFactory to Supabase                         |
+| `update-org-profile` | Update org metadata with ownership verification                 |
+| `org-write`          | Centralized write handler (projects, milestones, metrics, team) |
+| `log-donation`       | Log on-chain donations to Supabase with service_role            |
+| `log-payroll`        | Log on-chain payroll to Supabase with service_role              |
+| `log-grant-action`   | Log grant creation, disbursement, certification                 |
 
 ---
 
@@ -321,17 +322,17 @@ Built with React + TypeScript + Vite, deployed via Lovable to [treasury.yaislab.
 
 ### Routes
 
-| Route | Access | Description |
-|---|---|---|
-| `/` | All | Smart redirect by role |
-| `/explore` | All | Public org directory |
-| `/register` | All | New org registration |
-| `/org/:contractAddress` | All | Public org profile |
-| `/dashboard` | Org Owner | Treasury overview |
-| `/organization` | Org Owner | Profile, projects, impact, team |
-| `/payroll` | Org Owner | Employee management |
-| `/grants` | Org Owner | Grants, QF, Hypercerts, AI reports |
-| `/admin` | Protocol Admin | Org management and verification |
+| Route                   | Access         | Description                        |
+| ----------------------- | -------------- | ---------------------------------- |
+| `/`                     | All            | Smart redirect by role             |
+| `/explore`              | All            | Public org directory               |
+| `/register`             | All            | New org registration               |
+| `/org/:contractAddress` | All            | Public org profile                 |
+| `/dashboard`            | Org Owner      | Treasury overview                  |
+| `/organization`         | Org Owner      | Profile, projects, impact, team    |
+| `/payroll`              | Org Owner      | Employee management                |
+| `/grants`               | Org Owner      | Grants, QF, Hypercerts, AI reports |
+| `/admin`                | Protocol Admin | Org management and verification    |
 
 ### Role Detection (no hardcoded addresses)
 
@@ -345,16 +346,16 @@ Role is always read from the blockchain — never from hardcoded addresses.
 
 ### Key Hooks
 
-| Hook | Purpose |
-|---|---|
-| `useOrganization` | Role detection from CLAROFactory |
-| `useTreasury` | All blockchain reads for Dashboard |
-| `useGrants` | Grants + QF round + reports from blockchain |
-| `usePayroll` | Employee reads + write transactions |
-| `useAdmin` | Admin panel data + verifyOrganization |
-| `useRegister` | Full registration flow |
-| `useDonation` | Donation flow with Privy signing |
-| `useOrgWrite` | All Supabase writes via org-write Edge Function |
+| Hook              | Purpose                                         |
+| ----------------- | ----------------------------------------------- |
+| `useOrganization` | Role detection from CLAROFactory                |
+| `useTreasury`     | All blockchain reads for Dashboard              |
+| `useGrants`       | Grants + QF round + reports from blockchain     |
+| `usePayroll`      | Employee reads + write transactions             |
+| `useAdmin`        | Admin panel data + verifyOrganization           |
+| `useRegister`     | Full registration flow                          |
+| `useDonation`     | Donation flow with Privy signing                |
+| `useOrgWrite`     | All Supabase writes via org-write Edge Function |
 
 ---
 
@@ -398,12 +399,12 @@ npm run dev
 
 ## Roles and Test Wallets
 
-| Person | Wallet | Role |
-|---|---|---|
-| Sergio | `0xF70870E9B4B28A5E3c9c90Bc04b8b65571Ca7A6` | Protocol Admin |
-| Mauricio | `0x35B74424357490E29b1c04571B4798326CAf034f` | YAIS Lab Owner |
-| Mariela | `0xe1896E64ee6B3385Ed9d4fCbA2cDAd1C5615Be8F` | Pata Segura Owner |
-| Carol | `0x8bE3b2B3A2841892510846db55B7b669bd9BcA58` | Donor |
+| Person   | Wallet                                       | Role              |
+| -------- | -------------------------------------------- | ----------------- |
+| Sergio   | `0xF70870E9B4B28A5E3c9c90Bc04b8b65571Ca7A6`  | Protocol Admin    |
+| Mauricio | `0x35B74424357490E29b1c04571B4798326CAf034f` | YAIS Lab Owner    |
+| Mariela  | `0xe1896E64ee6B3385Ed9d4fCbA2cDAd1C5615Be8F` | Pata Segura Owner |
+| Carol    | `0x8bE3b2B3A2841892510846db55B7b669bd9BcA58` | Donor             |
 
 > Role detection is always read from CLAROFactory on-chain — never from hardcoded addresses.
 
@@ -517,9 +518,9 @@ Solo builder — smart contracts, frontend, AI integration, backend, product
 
 > CLARO Protocol runs on Avalanche Fuji Testnet. Mainnet launch pending security audit.
 
-| Contract | Address |
-|---|---|
-| CLAROFactory | `0xc591877C9d3310EdDb83065f5d9C86A9ed69324c` |
-| CLAROMatching | `0x32A6dCCb5aA832Cc37be8bdDAAf614F6ae3AFb52` |
-| YAISTreasury (YAIS Lab) | `0xc3Cd64C2E72F7C122388a452590a659Dc098960a` |
+| Contract                  | Address                                      |
+| ------------------------- | -------------------------------------------- |
+| CLAROFactory              | `0xc591877C9d3310EdDb83065f5d9C86A9ed69324c` |
+| CLAROMatching             | `0x32A6dCCb5aA832Cc37be8bdDAAf614F6ae3AFb52` |
+| YAISTreasury (YAIS Lab)   | `0xc3Cd64C2E72F7C122388a452590a659Dc098960a` |
 | Hypercerts (Base Sepolia) | `0x822F17A9A5EeCFd66dBAFf7946a8071C265D1d07` |
