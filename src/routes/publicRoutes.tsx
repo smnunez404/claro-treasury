@@ -7,6 +7,7 @@ import { useAuth } from "@/contexts/AuthContext";
 
 const ExplorePage = React.lazy(() => import("@/pages/ExplorePage"));
 const RegisterPage = React.lazy(() => import("@/pages/RegisterPage"));
+const OrgProfilePage = React.lazy(() => import("@/pages/OrgProfilePage"));
 
 function SmartRedirect() {
   const { role, isLoading } = useAuth();
