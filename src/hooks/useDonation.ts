@@ -23,7 +23,8 @@ export function useDonation() {
 
       await wallet.switchChain(CHAIN_ID);
 
-      const provider = await wallet.getEthersProvider() as ethers.BrowserProvider;
+      const ethersProvider = await wallet.getEthereumProvider();
+      const provider = new ethers.BrowserProvider(ethersProvider);
       const signer = await provider.getSigner();
 
       const amountAvax = amountUsd / AVAX_TO_USD;
