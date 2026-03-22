@@ -1,3 +1,6 @@
+import { Buffer } from "buffer";
+window.Buffer = window.Buffer || Buffer;
+
 import { createRoot } from "react-dom/client";
 import { PrivyProvider } from "@privy-io/react-auth";
 import { QueryClient, QueryClientProvider } from "@tanstack/react-query";
