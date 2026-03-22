@@ -1,7 +1,7 @@
-import { useMemo } from "react";
+import { useMemo, useState } from "react";
 import { useParams, Navigate, Link } from "react-router-dom";
 import { useQuery, useQueryClient } from "@tanstack/react-query";
-import { SearchX } from "lucide-react";
+import { SearchX, Heart } from "lucide-react";
 import { supabase } from "@/integrations/supabase/client";
 import type {
   OrgFull,
@@ -22,11 +22,13 @@ import MilestonesSection from "@/components/org/MilestonesSection";
 import DocumentsSection from "@/components/org/DocumentsSection";
 import AIReportSection from "@/components/org/AIReportSection";
 import OrgProfileSkeleton from "@/components/org/OrgProfileSkeleton";
+import DonationModal from "@/components/donation/DonationModal";
 
 export default function OrgProfilePage() {
   const { contractAddress } = useParams<{ contractAddress: string }>();
   const normalizedAddress = useMemo(() => contractAddress?.toLowerCase() ?? "", [contractAddress]);
   const queryClient = useQueryClient();
+  const [donateOpen, setDonateOpen] = useState(false);
 
   const orgQuery = useQuery({
     queryKey: ["org-profile", normalizedAddress],
@@ -157,6 +159,14 @@ export default function OrgProfilePage() {
 
   return (
     <div className="bg-gray-50 min-h-screen">
+      <div className="max-w-7xl mx-auto px-4 pt-4 flex justify-end">
+        <button
+          onClick={() => setDonateOpen(true)}
+          className="bg-[#1A56DB] text-white rounded-md px-4 py-2 text-sm font-medium flex items-center gap-2 hover:bg-[#1A56DB]/90 active:scale-[0.97] transition-all"
+        >
+          <Heart style={{ width: 14, height: 14 }} /> Donate
+        </button>
+      </div>
       <OrgProfileHeader org={org} financials={financialsQuery.data} />
       <OrgFinancialSummary financials={financialsQuery.data} isLoading={financialsQuery.isLoading} />
 
@@ -196,6 +206,13 @@ export default function OrgProfilePage() {
           </div>
         </div>
       </div>
+
+      <DonationModal
+        isOpen={donateOpen}
+        onClose={() => setDonateOpen(false)}
+        orgContract={normalizedAddress}
+        orgName={org?.name ?? "Organization"}
+      />
     </div>
   );
 }

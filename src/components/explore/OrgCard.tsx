@@ -110,7 +110,7 @@ export default function OrgCard({ org, logoUrl, website }: Props) {
         >
           View Details
         </Link>
-        <SupportButton orgContract={org.contract_address} />
+        <SupportButton orgContract={org.contract_address} orgName={org.name} />
       </div>
     </div>
   );

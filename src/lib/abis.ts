@@ -23,4 +23,5 @@ export const YAIS_TREASURY_ABI = [
   "function grantList(uint256 index) external view returns (string)",
   "function getEmployee(address wallet) external view returns (string name, uint256 salaryCents, bool active)",
   "function getGrant(string projectId) external view returns (string name, uint256 deposited, uint256 disbursed, bool active)",
+  "function depositToGrant(string memory projectId) external payable",
 ] as const;
