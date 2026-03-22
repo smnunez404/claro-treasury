@@ -8,7 +8,7 @@ interface Props {
   disabled?: boolean;
 }
 
-const quickAmounts = ["1", "5", "10", "25"];
+const quickAvaxAmounts = [0.01, 0.02, 0.03];
 
 export default function AmountInput({ value, onChange, orgName, disabled }: Props) {
   const numValue = Number(value);
