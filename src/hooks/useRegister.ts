@@ -51,7 +51,8 @@ export function useRegister() {
       if (!wallet) throw new Error("No wallet connected");
 
       await wallet.switchChain(CHAIN_ID);
-      const provider = (await wallet.getEthersProvider()) as ethers.BrowserProvider;
+      const ethersProvider = await wallet.getEthereumProvider();
+      const provider = new ethers.BrowserProvider(ethersProvider);
       const signer = await provider.getSigner();
       const signerAddress = await signer.getAddress();
 
