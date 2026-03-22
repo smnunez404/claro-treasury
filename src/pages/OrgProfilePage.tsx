@@ -1,7 +1,7 @@
 import { useMemo, useState } from "react";
 import { useParams, Navigate, Link } from "react-router-dom";
 import { useQuery, useQueryClient } from "@tanstack/react-query";
-import { SearchX } from "lucide-react";
+import { SearchX, Heart } from "lucide-react";
 import { supabase } from "@/integrations/supabase/client";
 import type {
   OrgFull,
