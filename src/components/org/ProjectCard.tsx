@@ -29,6 +29,10 @@ export default function ProjectCard({ project }: Props) {
           </span>
           {project.hypercert_tx_hash && (
             <>
+              <span className="inline-flex items-center gap-1 bg-green-50 border border-green-200 text-green-700 text-xs px-2 py-0.5 rounded-full whitespace-nowrap">
+                <Award size={10} />
+                Certified
+              </span>
               <a
                 href={`https://sepolia.basescan.org/tx/${project.hypercert_tx_hash}`}
                 target="_blank"
@@ -40,10 +44,6 @@ export default function ProjectCard({ project }: Props) {
                 <Award size={10} />
                 View Certificate
               </a>
-              <span className="inline-flex items-center gap-1 bg-green-50 border border-green-200 text-green-700 text-xs px-2 py-0.5 rounded-full whitespace-nowrap">
-                <Award size={10} />
-                Certified
-              </span>
             </>
           )}
         </div>
