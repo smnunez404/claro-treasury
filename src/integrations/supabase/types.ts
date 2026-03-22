@@ -501,6 +501,7 @@ export type Database = {
           external_id: string | null
           external_source: string | null
           github_url: string | null
+          hypercert_tx_hash: string | null
           id: string
           image_url: string | null
           is_active: boolean | null
@@ -522,6 +523,7 @@ export type Database = {
           external_id?: string | null
           external_source?: string | null
           github_url?: string | null
+          hypercert_tx_hash?: string | null
           id?: string
           image_url?: string | null
           is_active?: boolean | null
@@ -543,6 +545,7 @@ export type Database = {
           external_id?: string | null
           external_source?: string | null
           github_url?: string | null
+          hypercert_tx_hash?: string | null
           id?: string
           image_url?: string | null
           is_active?: boolean | null
