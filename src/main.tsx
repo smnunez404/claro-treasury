@@ -33,6 +33,7 @@ const router = createBrowserRouter([
 ]);
 
 function Root() {
+  useAppInit();
   return (
     <PrivyProvider appId={import.meta.env.VITE_PRIVY_APP_ID} config={privyConfig}>
       <QueryClientProvider client={queryClient}>
