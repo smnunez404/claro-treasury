@@ -164,3 +164,41 @@ export interface AIReport {
   total_usd: number | null;
   tx_count: number;
 }
+
+export interface TreasuryData {
+  balanceWei: bigint;
+  balanceAvax: number;
+  balanceUsd: string;
+  employeeCount: number;
+  grantCount: number;
+}
+
+export interface EmployeeOnChain {
+  wallet: string;
+  name: string;
+  salaryCents: number;
+  salaryUsd: string;
+  active: boolean;
+}
+
+export interface GrantOnChain {
+  projectId: string;
+  name: string;
+  depositedAvax: number;
+  depositedUsd: string;
+  disbursedAvax: number;
+  disbursedUsd: string;
+  availableAvax: number;
+  availableUsd: string;
+  active: boolean;
+}
+
+export interface DashboardQFRound {
+  roundId: number;
+  matchingPoolAvax: number;
+  matchingPoolUsd: string;
+  hoursRemaining: number;
+  isActive: boolean;
+  projectCount: number;
+}
+
