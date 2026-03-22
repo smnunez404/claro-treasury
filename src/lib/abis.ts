@@ -26,6 +26,8 @@ export const YAIS_TREASURY_ABI = [
   "function getEmployee(address wallet) external view returns (string name, uint256 salaryCents, bool active)",
   "function getGrant(string projectId) external view returns (string name, uint256 deposited, uint256 disbursed, bool active)",
   "function depositToGrant(string memory projectId) external payable",
+  "function createGrant(string memory projectId, string memory projectName) external",
+  "function disburseGrant(string memory projectId, address payable recipient, uint256 amount) external",
   "function addEmployee(address wallet, string memory name, uint256 salaryCents) external",
   "function removeEmployee(address wallet) external",
   "function executePayroll(address payable wallet, uint256 amount) external",

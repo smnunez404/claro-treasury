@@ -277,3 +277,34 @@ export interface PayrollTx {
   amountUsd: string;
   amountAvax: number;
 }
+
+export interface GrantFull extends GrantOnChain {
+  projectName: string;
+  supabaseProjectId: string | null;
+}
+
+export interface QFProjectStat {
+  projectId: string;
+  projectName: string;
+  totalContribAvax: number;
+  totalContribUsd: string;
+  uniqueDonors: number;
+  projectedMatchingAvax: number;
+  projectedMatchingUsd: string;
+}
+
+export interface QFRoundFull {
+  roundId: number;
+  endTime: number;
+  hoursRemaining: number;
+  minutesRemaining: number;
+  matchingPoolAvax: number;
+  matchingPoolUsd: string;
+  isActive: boolean;
+  distributed: boolean;
+  projects: QFProjectStat[];
+}
+
+export type DisburseStep = "idle" | "confirming" | "success" | "error";
+
+export type CreateGrantStep = "idle" | "confirming" | "success" | "error";
