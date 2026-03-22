@@ -1,33 +1,79 @@
-import { LayoutDashboard, TrendingUp, Users, Gift } from "lucide-react";
-
-const cards = [
-  { icon: LayoutDashboard, label: "Treasury Balance", value: "$0.00", sub: "USD" },
-  { icon: TrendingUp, label: "Total Raised", value: "$0.00", sub: "USD" },
-  { icon: Users, label: "Team Members", value: "0", sub: "Active employees" },
-  { icon: Gift, label: "Active Grants", value: "0", sub: "Funding rounds" },
-];
+import { useState } from "react";
+import { useTreasury } from "@/hooks/useTreasury";
+import { useAuth } from "@/contexts/AuthContext";
+import { SNOWTRACE_URL } from "@/lib/constants";
+import TreasuryKPIs from "@/components/dashboard/TreasuryKPIs";
+import QuickActions from "@/components/dashboard/QuickActions";
+import RecentActivity from "@/components/dashboard/RecentActivity";
+import EmployeesList from "@/components/dashboard/EmployeesList";
+import GrantsList from "@/components/dashboard/GrantsList";
+import DashboardQFCard from "@/components/dashboard/DashboardQFCard";
+import OnramperModal from "@/components/dashboard/OnramperModal";
+import DashboardSkeleton from "@/components/dashboard/DashboardSkeleton";
 
 export default function DashboardPage() {
-  return (
-    <div>
-      <h1 className="text-2xl font-semibold text-foreground">Dashboard</h1>
-      <p className="text-sm text-muted-foreground">Overview of your treasury</p>
+  const { orgContractAddress, address } = useAuth();
+  const {
+    treasuryData, employees, grants, qfRound, recentActivity, financials,
+    isTreasuryLoading, isEmployeesLoading, isGrantsLoading,
+    isActivityLoading, isActivityError, isTreasuryError, refetchTreasury,
+  } = useTreasury();
 
-      <div className="grid grid-cols-1 sm:grid-cols-2 lg:grid-cols-4 gap-6 mt-6">
-        {cards.map((c) => (
-          <div key={c.label} className="bg-card border border-border rounded-lg p-6 shadow-sm">
-            <div className="flex items-center gap-2">
-              <c.icon className="text-muted-foreground" strokeWidth={1.5} />
-              <span className="text-sm font-medium text-muted-foreground">{c.label}</span>
-            </div>
-            <p className="text-3xl font-bold text-foreground mt-2">{c.value}</p>
-            <p className="text-sm text-muted-foreground mt-1">{c.sub}</p>
-          </div>
-        ))}
+  const [onramperOpen, setOnramperOpen] = useState(false);
+  const [onramperMode, setOnramperMode] = useState<"buy" | "sell">("buy");
+
+  if (isTreasuryLoading) return <DashboardSkeleton />;
+
+  return (
+    <div className="min-h-screen">
+      {/* Header */}
+      <div className="px-4 pt-6 pb-4 md:px-8 flex flex-col md:flex-row md:items-center md:justify-between gap-4">
+        <div>
+          <h1 className="text-2xl font-semibold text-foreground">Dashboard</h1>
+          <p className="text-sm text-muted-foreground">Treasury overview for your organization</p>
+        </div>
+        <QuickActions
+          onBuy={() => { setOnramperMode("buy"); setOnramperOpen(true); }}
+          onWithdraw={() => { setOnramperMode("sell"); setOnramperOpen(true); }}
+          balanceUsd={treasuryData?.balanceUsd ?? "$0.00"}
+        />
       </div>
-      <p className="text-sm text-muted-foreground italic mt-6">
-        Real-time data connects in Sprint 4
-      </p>
+
+      {/* Content */}
+      <div className="px-4 pb-8 md:px-8 space-y-6">
+        <TreasuryKPIs
+          treasuryData={treasuryData}
+          financials={financials}
+          isLoading={isTreasuryLoading}
+          isError={isTreasuryError}
+          onRetry={() => refetchTreasury()}
+        />
+
+        {qfRound?.isActive && <DashboardQFCard qfRound={qfRound} />}
+
+        <div className="grid lg:grid-cols-3 gap-6">
+          <div className="lg:col-span-2 space-y-6">
+            <RecentActivity
+              transactions={recentActivity}
+              isLoading={isActivityLoading}
+              isError={isActivityError}
+              onRetry={() => {}}
+              snowtraceUrl={SNOWTRACE_URL}
+            />
+            <GrantsList grants={grants} isLoading={isGrantsLoading} />
+          </div>
+          <div>
+            <EmployeesList employees={employees} isLoading={isEmployeesLoading} />
+          </div>
+        </div>
+      </div>
+
+      <OnramperModal
+        isOpen={onramperOpen}
+        onClose={() => setOnramperOpen(false)}
+        mode={onramperMode}
+        walletAddress={address ?? ""}
+      />
     </div>
   );
 }
