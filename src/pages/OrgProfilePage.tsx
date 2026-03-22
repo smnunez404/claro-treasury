@@ -78,7 +78,7 @@ export default function OrgProfilePage() {
     queryFn: async () => {
       const { data, error } = await supabase
         .from("claro_projects")
-        .select("id, org_contract, name, description, category, status, target_usd, start_date, end_date, image_url, website_url, onchain_project_id")
+        .select("id, org_contract, name, description, category, status, target_usd, start_date, end_date, image_url, website_url, onchain_project_id, hypercert_tx_hash")
         .eq("org_contract", normalizedAddress)
         .eq("is_active", true)
         .order("created_at", { ascending: false });
