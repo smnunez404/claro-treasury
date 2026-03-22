@@ -1,4 +1,4 @@
-import { useState } from "react";
+import { useState, useEffect } from "react";
 import { Loader2 } from "lucide-react";
 import { Sheet, SheetContent, SheetHeader, SheetTitle, SheetDescription } from "@/components/ui/sheet";
 import { useOrgWrite } from "@/hooks/useOrgWrite";
@@ -41,7 +41,7 @@ export default function MilestoneForm({ isOpen, onClose, milestone, projects, or
   const [evidence_type, setEvidenceType] = useState(milestone?.evidence_type ?? "");
   const [titleError, setTitleError] = useState<string | null>(null);
 
-  useState(() => {
+  useEffect(() => {
     setProjectId(milestone?.project_id ?? projects[0]?.id ?? "");
     setTitle(milestone?.title ?? "");
     setDescription(milestone?.description ?? "");
@@ -52,7 +52,7 @@ export default function MilestoneForm({ isOpen, onClose, milestone, projects, or
     setEvidenceType(milestone?.evidence_type ?? "");
     setTitleError(null);
     clearError();
-  });
+  }, [milestone, isOpen]);
 
   async function handleSubmit() {
     if (!title.trim() || !project_id) {
