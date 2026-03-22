@@ -1,7 +1,6 @@
 import { useState, useCallback } from "react";
 import { ethers } from "ethers";
 import { useWallets } from "@privy-io/react-auth";
-import { supabase } from "@/integrations/supabase/client";
 import { AVAX_TO_USD, CHAIN_ID } from "@/lib/constants";
 import { YAIS_TREASURY_ABI } from "@/lib/abis";
 import type { DonationStep, DonationTarget } from "@/types/claro";
