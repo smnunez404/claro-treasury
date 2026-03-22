@@ -22,7 +22,7 @@ export default function TeamMemberForm({ isOpen, onClose, member, orgContractAdd
   const [sort_order, setSortOrder] = useState(String(member?.sort_order ?? 0));
   const [nameError, setNameError] = useState<string | null>(null);
 
-  useState(() => {
+  useEffect(() => {
     setName(member?.name ?? "");
     setRole(member?.role ?? "");
     setBio(member?.bio ?? "");
@@ -31,7 +31,7 @@ export default function TeamMemberForm({ isOpen, onClose, member, orgContractAdd
     setSortOrder(String(member?.sort_order ?? 0));
     setNameError(null);
     clearError();
-  });
+  }, [member, isOpen]);
 
   async function handleSubmit() {
     if (!name.trim()) {
