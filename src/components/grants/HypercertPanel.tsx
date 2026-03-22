@@ -1,11 +1,19 @@
 import { useState } from "react";
-import { Award, CheckCircle2, ExternalLink, Loader2 } from "lucide-react";
+import { Award, CheckCircle2, ExternalLink, Info, Loader2, XCircle } from "lucide-react";
 import { useQuery, useQueryClient } from "@tanstack/react-query";
+import { ethers } from "ethers";
+import { useWallets } from "@privy-io/react-auth";
 import {
   Select, SelectContent, SelectItem, SelectTrigger, SelectValue,
 } from "@/components/ui/select";
 import { useAuth } from "@/contexts/AuthContext";
 import { supabase } from "@/integrations/supabase/client";
+import { HYPERCERTS_ABI } from "@/lib/abis";
+import {
+  BASE_SEPOLIA_CHAIN_ID,
+  HYPERCERTS_CONTRACT_ADDRESS,
+  CHAIN_ID,
+} from "@/lib/constants";
 import type { GrantFull } from "@/types/claro";
 
 interface Props {
@@ -13,13 +21,14 @@ interface Props {
   orgContract: string;
 }
 
-const HYPERCERT_TX = "0x4fc9f578dfb22d92b1d1a008eacbf316ef7b3ee72649126b6211c353a03c507b";
-
 export default function HypercertPanel({ grants, orgContract }: Props) {
   const { address } = useAuth();
+  const { wallets } = useWallets();
   const queryClient = useQueryClient();
   const [selectedGrantId, setSelectedGrantId] = useState("");
-  const [certifyState, setCertifyState] = useState<"idle" | "loading" | "error">("idle");
+  const [certifyState, setCertifyState] = useState<"idle" | "loading" | "success" | "error">("idle");
+  const [certifyTx, setCertifyTx] = useState<string | null>(null);
+  const [certifyError, setCertifyError] = useState<string | null>(null);
 
   const { data: certifiedProjects = [] } = useQuery({
     queryKey: ["hypercerts", orgContract],
@@ -46,31 +55,91 @@ export default function HypercertPanel({ grants, orgContract }: Props) {
   const selectedGrant = grants.find((g) => g.projectId === selectedGrantId);
 
   const handleCertify = async () => {
-    if (!selectedGrant) return;
+    if (!selectedGrantId) return;
+
+    const grantData = grants.find(g => g.projectId === selectedGrantId);
+    if (!grantData) return;
+
     setCertifyState("loading");
+
     try {
-      await fetch(
-        `${import.meta.env.VITE_SUPABASE_URL}/functions/v1/log-grant-action`,
-        {
-          method: "POST",
-          headers: {
-            "Content-Type": "application/json",
-            Authorization: `Bearer ${import.meta.env.VITE_SUPABASE_PUBLISHABLE_KEY}`,
-          },
-          body: JSON.stringify({
-            action: "grant_certified",
-            org_contract: orgContract,
-            executed_by: address,
-            onchain_project_id: selectedGrantId,
-            project_name: selectedGrant.projectName,
-            hypercert_tx: HYPERCERT_TX,
-          }),
-        }
+      // 1. Get Privy wallet
+      const wallet = wallets[0];
+      if (!wallet) throw new Error("No wallet connected");
+
+      // 2. Switch to Base Sepolia (Chain ID 84532)
+      await wallet.switchChain(BASE_SEPOLIA_CHAIN_ID);
+
+      // 3. Get signer on Base Sepolia
+      const provider = new ethers.BrowserProvider(await wallet.getEthereumProvider());
+      const signer = await provider.getSigner();
+      const signerAddress = await signer.getAddress();
+
+      // 4. Build metadata URI (base64 JSON — no IPFS needed for testnet)
+      const metadata = {
+        name: grantData.projectName,
+        description: `Impact certificate for "${grantData.projectName}". Verified by CLARO Protocol on Avalanche Fuji. All transactions publicly verifiable.`,
+        external_url: `${window.location.origin}/org/${orgContract}`,
+        image: "https://treasury.yaislab.org/logo.png",
+        properties: {
+          org_contract: orgContract,
+          onchain_project_id: grantData.projectId,
+          total_raised_usd: grantData.depositedUsd,
+          certified_by: signerAddress,
+          certified_at: new Date().toISOString(),
+          network: "avalanche-fuji",
+        },
+      };
+      const uri = `data:application/json;base64,${btoa(
+        unescape(encodeURIComponent(JSON.stringify(metadata)))
+      )}`;
+
+      // 5. Call mintClaim on Hypercerts contract (Base Sepolia)
+      const contract = new ethers.Contract(
+        HYPERCERTS_CONTRACT_ADDRESS,
+        HYPERCERTS_ABI,
+        signer
       );
 
-      // Persist hypercert_tx_hash to Supabase project
-      const grantData = grants.find((g) => g.projectId === selectedGrantId);
-      if (grantData?.supabaseProjectId) {
+      const tx = await contract.mintClaim(
+        signerAddress,
+        1n,
+        uri,
+        0
+      );
+
+      const receipt = await tx.wait(1);
+      const txHash = receipt?.hash ?? tx.hash;
+
+      // 6. Switch back to Avalanche Fuji so the rest of the app works
+      await wallet.switchChain(CHAIN_ID);
+
+      // 7. Log to Supabase via log-grant-action (non-blocking)
+      try {
+        await fetch(
+          `${import.meta.env.VITE_SUPABASE_URL}/functions/v1/log-grant-action`,
+          {
+            method: "POST",
+            headers: {
+              "Content-Type": "application/json",
+              Authorization: `Bearer ${import.meta.env.VITE_SUPABASE_PUBLISHABLE_KEY}`,
+            },
+            body: JSON.stringify({
+              action: "grant_certified",
+              org_contract: orgContract,
+              executed_by: signerAddress,
+              onchain_project_id: grantData.projectId,
+              project_name: grantData.projectName,
+              hypercert_tx: txHash,
+            }),
+          }
+        );
+      } catch (logErr) {
+        console.error("log-grant-action failed (non-blocking):", logErr);
+      }
+
+      // 8. Persist TX hash to claro_projects via org-write (non-blocking)
+      if (grantData.supabaseProjectId) {
         try {
           await fetch(
             `${import.meta.env.VITE_SUPABASE_URL}/functions/v1/org-write`,
@@ -88,20 +157,36 @@ export default function HypercertPanel({ grants, orgContract }: Props) {
                   id: grantData.supabaseProjectId,
                   name: grantData.projectName,
                   status: "active",
-                  hypercert_tx_hash: HYPERCERT_TX,
+                  hypercert_tx_hash: txHash,
                 },
               }),
             }
           );
           queryClient.invalidateQueries({ queryKey: ["hypercerts", orgContract] });
-        } catch (e) {
-          console.error("Failed to persist hypercert TX (non-blocking):", e);
+        } catch (saveErr) {
+          console.error("Failed to persist hypercert TX (non-blocking):", saveErr);
         }
       }
 
-      setCertifyState("idle");
-      setSelectedGrantId("");
-    } catch {
+      setCertifyTx(txHash);
+      setCertifyState("success");
+    } catch (err: unknown) {
+      const message = err instanceof Error ? err.message : "Certification failed";
+      const isRejected =
+        message.toLowerCase().includes("rejected") ||
+        message.toLowerCase().includes("denied") ||
+        message.toLowerCase().includes("cancelled");
+
+      // If user rejected, switch back to Fuji anyway
+      try { await wallets[0]?.switchChain(CHAIN_ID); } catch { /* ignore */ }
+
+      setCertifyError(
+        isRejected
+          ? "Transaction cancelled."
+          : message.includes("insufficient")
+          ? "Insufficient ETH for gas on Base Sepolia. Get testnet ETH at coinbase.com/faucets"
+          : "Certification failed. Please try again."
+      );
       setCertifyState("error");
     }
   };
@@ -198,19 +283,83 @@ export default function HypercertPanel({ grants, orgContract }: Props) {
             ) : (
               <Award style={{ width: 14, height: 14 }} />
             )}
-            Certify Impact on Base
+            {certifyState === "loading" ? "Minting on Base Sepolia..." : "Certify Impact on Base"}
           </button>
 
+          {/* Idle: network info */}
+          {certifyState === "idle" && (
+            <p className="text-xs text-gray-400 flex items-center justify-center gap-1 mt-2">
+              <Info style={{ width: 10, height: 10 }} />
+              Requires ETH on Base Sepolia for gas (~$0.001)
+            </p>
+          )}
+
+          {/* Loading: chain indicator */}
+          {certifyState === "loading" && (
+            <p className="text-xs text-blue-500 flex items-center justify-center gap-1 mt-2">
+              <Loader2 className="animate-spin" style={{ width: 10, height: 10 }} />
+              Switching to Base Sepolia...
+            </p>
+          )}
+
+          {/* Success state */}
+          {certifyState === "success" && certifyTx && (
+            <div className="bg-green-50 border border-green-200 rounded-lg p-4 mt-3">
+              <div className="flex items-center gap-2">
+                <CheckCircle2 className="text-[#057A55]" style={{ width: 16, height: 16 }} />
+                <span className="text-sm text-green-800 font-medium">Impact certified on Base Sepolia!</span>
+              </div>
+              <p className="text-xs text-green-700 mt-1">
+                A new Hypercert was minted with your project metadata.
+              </p>
+              <a
+                href={`https://sepolia.basescan.org/tx/${certifyTx}`}
+                target="_blank"
+                rel="noopener noreferrer"
+                className="text-xs text-[#1A56DB] flex items-center gap-1 mt-2 hover:underline"
+              >
+                View on Basescan
+                <ExternalLink style={{ width: 10, height: 10 }} />
+              </a>
+              <button
+                onClick={() => { setCertifyState("idle"); setCertifyTx(null); setSelectedGrantId(""); }}
+                className="text-xs text-gray-400 mt-2 cursor-pointer underline"
+              >
+                Certify another grant
+              </button>
+            </div>
+          )}
+
+          {/* Error state */}
           {certifyState === "error" && (
             <div className="bg-red-50 border border-red-200 rounded-lg p-3 mt-3">
-              <p className="text-xs text-red-700">Certification failed. Please try again.</p>
+              <div className="flex items-center gap-2">
+                <XCircle className="text-red-500" style={{ width: 14, height: 14 }} />
+                <p className="text-xs text-red-700">{certifyError}</p>
+              </div>
+              {certifyError?.includes("faucet") && (
+                <a
+                  href="https://www.coinbase.com/faucets/base-ethereum-goerli-faucet"
+                  target="_blank"
+                  rel="noopener noreferrer"
+                  className="text-xs text-[#1A56DB] mt-1 inline-block hover:underline"
+                >
+                  Get free testnet ETH →
+                </a>
+              )}
+              <button
+                onClick={() => { setCertifyState("idle"); setCertifyError(null); }}
+                className="text-xs text-gray-500 mt-2 underline cursor-pointer block"
+              >
+                Try again
+              </button>
             </div>
           )}
         </>
       )}
 
       <p className="text-xs text-gray-400 text-center mt-4">
-        Full Hypercerts minting on Base Sepolia available in production release.
+        Hypercerts minted on Base Sepolia · Metadata stored on-chain · Permanently verifiable
       </p>
     </div>
   );
