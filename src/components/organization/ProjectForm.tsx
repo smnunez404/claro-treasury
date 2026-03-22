@@ -111,7 +111,7 @@ export default function ProjectForm({ isOpen, onClose, project, orgContractAddre
             </select>
           </Field>
           <Field label="Status">
-            <select value={status} onChange={e => setStatus(e.target.value)} className={selectCls}>
+            <select value={status} onChange={e => setStatus(e.target.value as "active" | "completed" | "on_hold" | "cancelled")} className={selectCls}>
               {STATUSES.map(s => <option key={s.value} value={s.value}>{s.label}</option>)}
             </select>
           </Field>

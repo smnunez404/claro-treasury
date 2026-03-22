@@ -33,12 +33,12 @@ export default function OrganizationPage() {
     queryFn: async () => {
       const { data, error } = await supabase
         .from("claro_projects")
-        .select("id, name, description, category, status, target_usd, start_date, end_date, website_url, onchain_project_id, created_at")
+        .select("id, name, description, category, status, target_usd, start_date, end_date, website_url, onchain_project_id, image_url, created_at")
         .eq("org_contract", orgContractAddress!)
         .eq("is_active", true)
         .order("created_at", { ascending: false });
       if (error) throw error;
-      return (data ?? []) as Project[];
+      return (data ?? []) as unknown as Project[];
     },
   });
 

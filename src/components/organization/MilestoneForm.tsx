@@ -103,7 +103,7 @@ export default function MilestoneForm({ isOpen, onClose, milestone, projects, or
             {titleError && <p className="text-xs text-red-600 mt-1">{titleError}</p>}
           </Field>
           <Field label="Status">
-            <select value={status} onChange={e => setStatus(e.target.value)} className={selectCls}>
+            <select value={status} onChange={e => setStatus(e.target.value as "pending" | "in_progress" | "completed" | "delayed")} className={selectCls}>
               {STATUSES.map(s => <option key={s.value} value={s.value}>{s.label}</option>)}
             </select>
           </Field>
