@@ -52,7 +52,7 @@ export default function Sidebar() {
     <aside className="hidden lg:flex lg:w-64 lg:flex-col h-screen fixed left-0 top-0 z-20" style={{ backgroundColor: "#0A0E1A" }}>
       {/* Logo */}
       <div className="px-4 py-5 border-b border-gray-800 flex items-center gap-2">
-        <Shield className="text-primary" strokeWidth={1.5} />
+        <img src={claroLogoLight} alt="CLARO Protocol" className="h-7 w-7 object-contain" />
         <span className="text-white font-bold text-lg">CLARO</span>
         <span className="text-gray-400 text-xs">Protocol</span>
       </div>
