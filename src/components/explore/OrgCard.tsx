@@ -105,7 +105,7 @@ export default function OrgCard({ org, logoUrl, website }: Props) {
       {/* Footer */}
       <div className="px-5 pb-5 mt-auto pt-4 border-t border-gray-100 flex gap-2">
         <Link
-          to="/explore"
+          to={`/org/${org.contract_address}`}
           className="flex-1 border border-gray-300 bg-white text-gray-700 hover:bg-gray-50 rounded-md py-2 text-xs font-medium text-center active:scale-[0.97] transition-all"
         >
           View Details

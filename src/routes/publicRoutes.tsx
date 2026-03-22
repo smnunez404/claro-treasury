@@ -7,6 +7,7 @@ import { useAuth } from "@/contexts/AuthContext";
 
 const ExplorePage = React.lazy(() => import("@/pages/ExplorePage"));
 const RegisterPage = React.lazy(() => import("@/pages/RegisterPage"));
+const OrgProfilePage = React.lazy(() => import("@/pages/OrgProfilePage"));
 
 function SmartRedirect() {
   const { role, isLoading } = useAuth();
@@ -35,6 +36,14 @@ export const publicRoutes: RouteObject[] = [
         element: (
           <Suspense fallback={<PageLoader />}>
             <RegisterPage />
+          </Suspense>
+        ),
+      },
+      {
+        path: "org/:contractAddress",
+        element: (
+          <Suspense fallback={<PageLoader />}>
+            <OrgProfilePage />
           </Suspense>
         ),
       },
