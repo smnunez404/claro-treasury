@@ -26,6 +26,19 @@ export default function ProjectCard({ project }: Props) {
         <span className={`border ${s.bg} ${s.text} text-xs px-2 py-0.5 rounded-full whitespace-nowrap`}>
           {s.label}
         </span>
+        {project.hypercert_tx_hash && (
+          <a
+            href={`https://sepolia.basescan.org/tx/${project.hypercert_tx_hash}`}
+            target="_blank"
+            rel="noopener noreferrer"
+            onClick={(e) => e.stopPropagation()}
+            className="inline-flex items-center gap-1 bg-amber-50 border border-amber-200 text-amber-700 text-xs px-2 py-0.5 rounded-full hover:bg-amber-100 transition-colors"
+            title="Impact certified on Base Sepolia · Click to verify"
+          >
+            <Award size={10} />
+            Certified
+          </a>
+        )}
       </div>
 
       {project.description && (
