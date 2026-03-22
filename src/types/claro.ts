@@ -31,3 +31,33 @@ export interface AuthState {
   orgContractAddress: string | null;
   isLoading: boolean;
 }
+
+export interface OrgCard {
+  contract_address: string;
+  name: string;
+  country: string;
+  description: string | null;
+  org_type: string | null;
+  verified: boolean;
+  transparency_score: number;
+  projects: number;
+  transactions: number;
+  milestones_done: number;
+  total_received_usd: number;
+  total_donors: number;
+  logo_url: string | null;
+}
+
+export interface QFRound {
+  matchingPoolAvax: number;
+  matchingPoolUsd: string;
+  endTime: number;
+  hoursRemaining: number;
+  isActive: boolean;
+}
+
+export interface ProtocolStats {
+  totalOrgs: number;
+  verifiedOrgs: number;
+  totalTransactions: number;
+}
