@@ -40,7 +40,21 @@ export default function AmountInput({ value, onChange, orgName, disabled }: Prop
         </p>
       )}
 
-      <div className="flex gap-2 mt-2">
+      <div className="flex flex-wrap gap-2 mt-2">
+        {quickAvaxAmounts.map((avax) => {
+          const usdEquiv = (avax * AVAX_TO_USD).toFixed(2);
+          return (
+            <button
+              key={`avax-${avax}`}
+              type="button"
+              onClick={() => onChange(usdEquiv)}
+              disabled={disabled}
+              className="border border-border text-muted-foreground text-xs px-3 py-1.5 rounded-md hover:bg-accent transition-colors disabled:opacity-50"
+            >
+              {avax} AVAX
+            </button>
+          );
+        })}
         {quickAmounts.map((amt) => (
           <button
             key={amt}
