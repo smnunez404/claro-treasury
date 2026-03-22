@@ -17,7 +17,8 @@ export function usePayroll() {
   async function getSigner() {
     const privyWallet = wallets[0];
     await privyWallet.switchChain(CHAIN_ID);
-    const provider = (await privyWallet.getEthersProvider()) as ethers.BrowserProvider;
+    const ethersProvider = await privyWallet.getEthereumProvider();
+    const provider = new ethers.BrowserProvider(ethersProvider);
     return provider.getSigner();
   }
 
