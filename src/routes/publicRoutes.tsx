@@ -39,6 +39,14 @@ export const publicRoutes: RouteObject[] = [
           </Suspense>
         ),
       },
+      {
+        path: "org/:contractAddress",
+        element: (
+          <Suspense fallback={<PageLoader />}>
+            <OrgProfilePage />
+          </Suspense>
+        ),
+      },
     ],
   },
 ];
