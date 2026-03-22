@@ -8,7 +8,7 @@ interface Props {
   disabled?: boolean;
 }
 
-const quickAmounts = ["1", "5", "10", "25"];
+const quickAvaxAmounts = [0.01, 0.02, 0.03];
 
 export default function AmountInput({ value, onChange, orgName, disabled }: Props) {
   const numValue = Number(value);
@@ -40,17 +40,21 @@ export default function AmountInput({ value, onChange, orgName, disabled }: Prop
       )}
 
       <div className="flex gap-2 mt-2">
-        {quickAmounts.map((amt) => (
-          <button
-            key={amt}
-            type="button"
-            onClick={() => onChange(amt)}
-            disabled={disabled}
-            className="border border-border text-muted-foreground text-xs px-3 py-1.5 rounded-md hover:bg-accent transition-colors disabled:opacity-50"
-          >
-            ${amt}
-          </button>
-        ))}
+        {quickAvaxAmounts.map((avax) => {
+          const usd = (avax * AVAX_TO_USD).toFixed(2);
+          return (
+            <button
+              key={avax}
+              type="button"
+              onClick={() => onChange(usd)}
+              disabled={disabled}
+              className="border border-border text-muted-foreground text-xs px-3 py-1.5 rounded-md hover:bg-accent transition-colors disabled:opacity-50"
+            >
+              {avax} AVAX{" "}
+              <span className="text-muted-foreground/60">(${usd})</span>
+            </button>
+          );
+        })}
       </div>
 
       <p className="text-xs text-muted-foreground text-center mt-2">
