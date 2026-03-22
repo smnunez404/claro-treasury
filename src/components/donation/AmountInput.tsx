@@ -51,7 +51,7 @@ export default function AmountInput({ value, onChange, orgName, disabled }: Prop
               disabled={disabled}
               className="border border-border text-muted-foreground text-xs px-3 py-1.5 rounded-md hover:bg-accent transition-colors disabled:opacity-50"
             >
-              {avax} AVAX
+              ${usdEquiv}
             </button>
           );
         })}
