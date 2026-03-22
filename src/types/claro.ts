@@ -75,6 +75,7 @@ export interface OrgFull {
   verified_at: string | null;
   social_twitter: string | null;
   social_instagram: string | null;
+  contact_email: string | null;
 }
 
 export interface OrgFinancials {
