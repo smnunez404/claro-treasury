@@ -2,7 +2,7 @@ import { Link } from "react-router-dom";
 import { usePrivy } from "@privy-io/react-auth";
 import { useAuth } from "@/contexts/AuthContext";
 import { truncateAddress } from "@/lib/constants";
-import { Shield } from "lucide-react";
+import claroLogoDark from "/claro-logo-dark.png";
 
 export default function TopNavbar() {
   const { login } = usePrivy();
