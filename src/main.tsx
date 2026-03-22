@@ -22,7 +22,7 @@ const queryClient = new QueryClient({
 const privyConfig = {
   loginMethods: ["email", "google", "wallet"] as ("email" | "google" | "wallet")[],
   appearance: { theme: "light" as const, accentColor: "#1A56DB" as `#${string}` },
-  embeddedWallets: { createOnLogin: "users-without-wallets" as const },
+  embeddedWallets: { ethereum: { createOnLogin: "users-without-wallets" as const } },
 };
 
 const router = createBrowserRouter([
