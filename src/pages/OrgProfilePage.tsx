@@ -22,6 +22,7 @@ import MilestonesSection from "@/components/org/MilestonesSection";
 import DocumentsSection from "@/components/org/DocumentsSection";
 import AIReportSection from "@/components/org/AIReportSection";
 import OrgProfileSkeleton from "@/components/org/OrgProfileSkeleton";
+import DonationModal from "@/components/donation/DonationModal";
 
 export default function OrgProfilePage() {
   const { contractAddress } = useParams<{ contractAddress: string }>();
