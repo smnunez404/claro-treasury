@@ -82,8 +82,8 @@ export default function DonationModal({ isOpen, onClose, orgContract, orgName }:
             />
             <AmountInput value={amountUsd} onChange={setAmountUsd} orgName={orgName} />
 
-            {numAmount > 0 && numAmount < 0.5 && (
-              <p className="text-xs text-destructive">Minimum donation is $0.50</p>
+            {numAmount > 0 && numAmount < 0.01 && (
+              <p className="text-xs text-destructive">Minimum donation is $0.01</p>
             )}
 
             <button
