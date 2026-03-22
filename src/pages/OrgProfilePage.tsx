@@ -1,3 +1,4 @@
+import { useMemo } from "react";
 import { useParams, Navigate, Link } from "react-router-dom";
 import { useQuery, useQueryClient } from "@tanstack/react-query";
 import { SearchX } from "lucide-react";
@@ -24,10 +25,8 @@ import OrgProfileSkeleton from "@/components/org/OrgProfileSkeleton";
 
 export default function OrgProfilePage() {
   const { contractAddress } = useParams<{ contractAddress: string }>();
-  const normalizedAddress = contractAddress?.toLowerCase() ?? "";
+  const normalizedAddress = useMemo(() => contractAddress?.toLowerCase() ?? "", [contractAddress]);
   const queryClient = useQueryClient();
-
-  if (!contractAddress) return <Navigate to="/explore" replace />;
 
   const orgQuery = useQuery({
     queryKey: ["org-profile", normalizedAddress],
@@ -41,6 +40,7 @@ export default function OrgProfilePage() {
       if (error) throw error;
       return data as OrgFull | null;
     },
+    enabled: !!contractAddress,
   });
 
   const financialsQuery = useQuery({
@@ -54,6 +54,7 @@ export default function OrgProfilePage() {
       if (error) throw error;
       return data as OrgFinancials | null;
     },
+    enabled: !!contractAddress,
   });
 
   const scoreQuery = useQuery({
@@ -67,6 +68,7 @@ export default function OrgProfilePage() {
       if (error) throw error;
       return data as ScoreBreakdown | null;
     },
+    enabled: !!contractAddress,
   });
 
   const projectsQuery = useQuery({
@@ -81,6 +83,7 @@ export default function OrgProfilePage() {
       if (error) throw error;
       return (data ?? []) as Project[];
     },
+    enabled: !!contractAddress,
   });
 
   const txQuery = useQuery({
@@ -95,6 +98,7 @@ export default function OrgProfilePage() {
       if (error) throw error;
       return (data ?? []) as Transaction[];
     },
+    enabled: !!contractAddress,
   });
 
   const teamQuery = useQuery({
@@ -109,6 +113,7 @@ export default function OrgProfilePage() {
       if (error) throw error;
       return (data ?? []) as TeamMember[];
     },
+    enabled: !!contractAddress,
   });
 
   const reportQuery = useQuery({
@@ -125,7 +130,10 @@ export default function OrgProfilePage() {
       if (error) throw error;
       return data as AIReport | null;
     },
+    enabled: !!contractAddress,
   });
+
+  if (!contractAddress) return <Navigate to="/explore" replace />;
 
   if (orgQuery.isLoading) return <OrgProfileSkeleton />;
 
