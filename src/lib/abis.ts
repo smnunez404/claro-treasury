@@ -6,12 +6,14 @@ export const CLARO_FACTORY_ABI = [
 
 export const CLARO_MATCHING_ABI = [
   "function currentRoundId() external view returns (uint256)",
-  "function getRound(uint256 roundId) external view returns (uint256 matchingPool, uint256 startTime, uint256 endTime, bool active, bool distributed)",
+  "function getRound(uint256 roundId) external view returns (uint256 id, uint256 startTime, uint256 endTime, uint256 matchingPool, bool distributed, bool active)",
   "function getProjectContributions(uint256 roundId, string projectId) external view returns (uint256 totalContributions, uint256 uniqueDonors)",
   "function matchingPool() external view returns (uint256)",
   "function roundCount() external view returns (uint256)",
-  "function getRoundProjects(uint256 roundId) external view returns (string[])",
+  "function getRoundProjects(uint256 roundId) external view returns (string[] memory)",
   "function getProjectStats(uint256 roundId, string memory projectId) external view returns (uint256 totalAmount, uint256 uniqueDonors)",
+  "function calculateMatching(uint256 roundId) external view returns (string[] memory projectIds, uint256[] memory amounts)",
+  "function getTimeRemaining(uint256 roundId) external view returns (uint256)",
 ] as const;
 
 export const YAIS_TREASURY_ABI = [
@@ -24,6 +26,8 @@ export const YAIS_TREASURY_ABI = [
   "function getEmployee(address wallet) external view returns (string name, uint256 salaryCents, bool active)",
   "function getGrant(string projectId) external view returns (string name, uint256 deposited, uint256 disbursed, bool active)",
   "function depositToGrant(string memory projectId) external payable",
+  "function createGrant(string memory projectId, string memory projectName) external",
+  "function disburseGrant(string memory projectId, address payable recipient, uint256 amount) external",
   "function addEmployee(address wallet, string memory name, uint256 salaryCents) external",
   "function removeEmployee(address wallet) external",
   "function executePayroll(address payable wallet, uint256 amount) external",
