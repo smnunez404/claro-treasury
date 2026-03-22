@@ -187,6 +187,13 @@ export type Database = {
             foreignKeyName: "claro_donations_org_contract_fkey"
             columns: ["org_contract"]
             isOneToOne: false
+            referencedRelation: "v_public_organizations"
+            referencedColumns: ["contract_address"]
+          },
+          {
+            foreignKeyName: "claro_donations_org_contract_fkey"
+            columns: ["org_contract"]
+            isOneToOne: false
             referencedRelation: "v_transparency_score"
             referencedColumns: ["contract_address"]
           },
@@ -568,6 +575,13 @@ export type Database = {
             foreignKeyName: "claro_projects_org_contract_fkey"
             columns: ["org_contract"]
             isOneToOne: false
+            referencedRelation: "v_public_organizations"
+            referencedColumns: ["contract_address"]
+          },
+          {
+            foreignKeyName: "claro_projects_org_contract_fkey"
+            columns: ["org_contract"]
+            isOneToOne: false
             referencedRelation: "v_transparency_score"
             referencedColumns: ["contract_address"]
           },
@@ -629,6 +643,13 @@ export type Database = {
             columns: ["org_contract"]
             isOneToOne: false
             referencedRelation: "v_org_transparency"
+            referencedColumns: ["contract_address"]
+          },
+          {
+            foreignKeyName: "claro_reports_org_contract_fkey"
+            columns: ["org_contract"]
+            isOneToOne: false
+            referencedRelation: "v_public_organizations"
             referencedColumns: ["contract_address"]
           },
           {
@@ -733,6 +754,13 @@ export type Database = {
             columns: ["org_contract"]
             isOneToOne: false
             referencedRelation: "v_org_transparency"
+            referencedColumns: ["contract_address"]
+          },
+          {
+            foreignKeyName: "claro_team_members_org_contract_fkey"
+            columns: ["org_contract"]
+            isOneToOne: false
+            referencedRelation: "v_public_organizations"
             referencedColumns: ["contract_address"]
           },
           {
@@ -874,6 +902,13 @@ export type Database = {
             foreignKeyName: "claro_transactions_org_contract_fkey"
             columns: ["org_contract"]
             isOneToOne: false
+            referencedRelation: "v_public_organizations"
+            referencedColumns: ["contract_address"]
+          },
+          {
+            foreignKeyName: "claro_transactions_org_contract_fkey"
+            columns: ["org_contract"]
+            isOneToOne: false
             referencedRelation: "v_transparency_score"
             referencedColumns: ["contract_address"]
           },
@@ -910,6 +945,66 @@ export type Database = {
           verified: boolean | null
           verified_at: string | null
           website: string | null
+        }
+        Relationships: []
+      }
+      v_public_organizations: {
+        Row: {
+          contract_address: string | null
+          country: string | null
+          cover_image_url: string | null
+          created_at: string | null
+          description: string | null
+          factory_address: string | null
+          is_active: boolean | null
+          logo_url: string | null
+          name: string | null
+          org_type: string | null
+          owner_address: string | null
+          social_instagram: string | null
+          social_twitter: string | null
+          updated_at: string | null
+          verified: boolean | null
+          verified_at: string | null
+          website: string | null
+        }
+        Insert: {
+          contract_address?: string | null
+          country?: string | null
+          cover_image_url?: string | null
+          created_at?: string | null
+          description?: string | null
+          factory_address?: string | null
+          is_active?: boolean | null
+          logo_url?: string | null
+          name?: string | null
+          org_type?: string | null
+          owner_address?: string | null
+          social_instagram?: string | null
+          social_twitter?: string | null
+          updated_at?: string | null
+          verified?: boolean | null
+          verified_at?: string | null
+          website?: string | null
+        }
+        Update: {
+          contract_address?: string | null
+          country?: string | null
+          cover_image_url?: string | null
+          created_at?: string | null
+          description?: string | null
+          factory_address?: string | null
+          is_active?: boolean | null
+          logo_url?: string | null
+          name?: string | null
+          org_type?: string | null
+          owner_address?: string | null
+          social_instagram?: string | null
+          social_twitter?: string | null
+          updated_at?: string | null
+          verified?: boolean | null
+          verified_at?: string | null
+          website?: string | null
         }
         Relationships: []
       }
