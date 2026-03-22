@@ -32,3 +32,7 @@ export const YAIS_TREASURY_ABI = [
   "function removeEmployee(address wallet) external",
   "function executePayroll(address payable wallet, uint256 amount) external",
 ] as const;
+
+export const HYPERCERTS_ABI = [
+  "function mintClaim(address account, uint256 units, string memory uri, uint8 restrictions) external",
+] as const;

@@ -8,6 +8,9 @@ export const CHAIN_ID = Number(import.meta.env.VITE_CHAIN_ID ?? "43113");
 export const SNOWTRACE_URL = import.meta.env.VITE_SNOWTRACE_URL as string;
 export const SUPABASE_URL = import.meta.env.VITE_SUPABASE_URL as string;
 export const SUPABASE_KEY = import.meta.env.VITE_SUPABASE_PUBLISHABLE_KEY as string;
+export const BASE_SEPOLIA_CHAIN_ID = 84532;
+export const BASE_SEPOLIA_RPC = import.meta.env.VITE_BASE_SEPOLIA_RPC as string;
+export const HYPERCERTS_CONTRACT_ADDRESS = import.meta.env.VITE_HYPERCERTS_CONTRACT as string;
 
 export const avaxToUsd = (avax: number): string =>
   "$" + (avax * AVAX_TO_USD).toFixed(2);
