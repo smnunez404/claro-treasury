@@ -1,9 +1,11 @@
 import { useState } from "react";
 import { Award, CheckCircle2, ExternalLink, Loader2 } from "lucide-react";
+import { useQuery, useQueryClient } from "@tanstack/react-query";
 import {
   Select, SelectContent, SelectItem, SelectTrigger, SelectValue,
 } from "@/components/ui/select";
 import { useAuth } from "@/contexts/AuthContext";
+import { supabase } from "@/integrations/supabase/client";
 import type { GrantFull } from "@/types/claro";
 
 interface Props {
@@ -15,8 +17,31 @@ const HYPERCERT_TX = "0x4fc9f578dfb22d92b1d1a008eacbf316ef7b3ee72649126b6211c353
 
 export default function HypercertPanel({ grants, orgContract }: Props) {
   const { address } = useAuth();
+  const queryClient = useQueryClient();
   const [selectedGrantId, setSelectedGrantId] = useState("");
-  const [certifyState, setCertifyState] = useState<"idle" | "loading" | "success" | "error">("idle");
+  const [certifyState, setCertifyState] = useState<"idle" | "loading" | "error">("idle");
+
+  const { data: certifiedProjects = [] } = useQuery({
+    queryKey: ["hypercerts", orgContract],
+    enabled: !!orgContract,
+    queryFn: async () => {
+      const { data, error } = await supabase
+        .from("claro_projects")
+        .select("id, name, onchain_project_id, hypercert_tx_hash")
+        .eq("org_contract", orgContract.toLowerCase())
+        .eq("is_active", true)
+        .not("hypercert_tx_hash", "is", null);
+      if (error) throw error;
+      return data ?? [];
+    },
+  });
+
+  const certifiedOnchainIds = new Set(
+    certifiedProjects.map((cp) => cp.onchain_project_id)
+  );
+  const uncertifiedGrants = grants.filter(
+    (g) => !certifiedOnchainIds.has(g.projectId)
+  );
 
   const selectedGrant = grants.find((g) => g.projectId === selectedGrantId);
 
@@ -42,7 +67,40 @@ export default function HypercertPanel({ grants, orgContract }: Props) {
           }),
         }
       );
-      setCertifyState("success");
+
+      // Persist hypercert_tx_hash to Supabase project
+      const grantData = grants.find((g) => g.projectId === selectedGrantId);
+      if (grantData?.supabaseProjectId) {
+        try {
+          await fetch(
+            `${import.meta.env.VITE_SUPABASE_URL}/functions/v1/org-write`,
+            {
+              method: "POST",
+              headers: {
+                "Content-Type": "application/json",
+                Authorization: `Bearer ${import.meta.env.VITE_SUPABASE_PUBLISHABLE_KEY}`,
+              },
+              body: JSON.stringify({
+                action: "update_project",
+                org_contract: orgContract,
+                wallet_address: address,
+                payload: {
+                  id: grantData.supabaseProjectId,
+                  name: grantData.projectName,
+                  status: "active",
+                  hypercert_tx_hash: HYPERCERT_TX,
+                },
+              }),
+            }
+          );
+          queryClient.invalidateQueries({ queryKey: ["hypercerts", orgContract] });
+        } catch (e) {
+          console.error("Failed to persist hypercert TX (non-blocking):", e);
+        }
+      }
+
+      setCertifyState("idle");
+      setSelectedGrantId("");
     } catch {
       setCertifyState("error");
     }
@@ -71,8 +129,42 @@ export default function HypercertPanel({ grants, orgContract }: Props) {
         </p>
       </div>
 
+      {/* Certified Grants */}
+      {certifiedProjects.length > 0 && (
+        <div className="mb-4">
+          <p className="text-sm font-semibold text-gray-700 mb-3">Certified Grants</p>
+          <div className="space-y-2">
+            {certifiedProjects.map((project) => (
+              <div
+                key={project.id}
+                className="bg-green-50 border border-green-200 rounded-lg p-3 flex items-center justify-between"
+              >
+                <div className="flex items-center gap-2">
+                  <CheckCircle2 className="text-[#057A55]" style={{ width: 14, height: 14 }} />
+                  <span className="text-sm font-medium text-gray-900">{project.name}</span>
+                </div>
+                <a
+                  href={`https://sepolia.basescan.org/tx/${project.hypercert_tx_hash}`}
+                  target="_blank"
+                  rel="noopener noreferrer"
+                  className="text-xs text-[#1A56DB] flex items-center gap-1 hover:underline"
+                >
+                  View on Basescan
+                  <ExternalLink style={{ width: 10, height: 10 }} />
+                </a>
+              </div>
+            ))}
+          </div>
+        </div>
+      )}
+
       {grants.length === 0 ? (
         <p className="text-sm text-gray-400 text-center py-4">Create a grant first to certify its impact.</p>
+      ) : uncertifiedGrants.length === 0 && certifiedProjects.length > 0 ? (
+        <div className="text-sm text-gray-500 text-center py-2 flex items-center justify-center gap-2">
+          <CheckCircle2 className="text-[#057A55]" style={{ width: 14, height: 14 }} />
+          All grants have been certified.
+        </div>
       ) : (
         <>
           <p className="text-sm font-medium text-gray-700 mb-2">Select grant to certify</p>
@@ -81,7 +173,7 @@ export default function HypercertPanel({ grants, orgContract }: Props) {
               <SelectValue placeholder="Select a grant..." />
             </SelectTrigger>
             <SelectContent>
-              {grants.map((g) => (
+              {uncertifiedGrants.map((g) => (
                 <SelectItem key={g.projectId} value={g.projectId}>
                   {g.projectName}
                 </SelectItem>
@@ -108,25 +200,6 @@ export default function HypercertPanel({ grants, orgContract }: Props) {
             )}
             Certify Impact on Base
           </button>
-
-          {certifyState === "success" && (
-            <div className="bg-green-50 border border-green-200 rounded-lg p-4 mt-3">
-              <div className="flex items-center gap-2">
-                <CheckCircle2 className="text-[#057A55]" style={{ width: 16, height: 16 }} />
-                <p className="text-sm text-green-800 font-medium">Impact certified!</p>
-              </div>
-              <p className="text-xs text-green-700 mt-1">Your impact certificate is recorded on Base Sepolia.</p>
-              <a
-                href={`https://sepolia.basescan.org/tx/${HYPERCERT_TX}`}
-                target="_blank"
-                rel="noopener noreferrer"
-                className="text-xs text-[#1A56DB] flex items-center gap-1 mt-2 hover:underline"
-              >
-                View certificate on Basescan
-                <ExternalLink style={{ width: 10, height: 10 }} />
-              </a>
-            </div>
-          )}
 
           {certifyState === "error" && (
             <div className="bg-red-50 border border-red-200 rounded-lg p-3 mt-3">
