@@ -2,6 +2,8 @@ export const CLARO_FACTORY_ABI = [
   "function protocolOwner() external view returns (address)",
   "function getOrganizationByOwner(address owner) external view returns (address)",
   "function getAllOrganizations() external view returns (address[])",
+  "function verifyOrganization(address contractAddress) external",
+  "function getOrganization(address contractAddress) external view returns (address owner, string memory name, string memory country, string memory description, string memory website, bool verified, uint256 createdAt)",
 ] as const;
 
 export const CLARO_MATCHING_ABI = [
