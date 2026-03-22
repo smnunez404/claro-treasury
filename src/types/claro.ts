@@ -268,3 +268,12 @@ export interface ImpactMetric {
   evidence_url: string | null;
   verified: boolean;
 }
+
+export type PayrollStep = "idle" | "confirming" | "success" | "error";
+
+export interface PayrollTx {
+  txHash: string;
+  employeeName: string;
+  amountUsd: string;
+  amountAvax: number;
+}
