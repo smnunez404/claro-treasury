@@ -36,7 +36,7 @@ export default function ProjectCard({ project }: Props) {
             title="Impact certified on Base Sepolia · Click to verify"
           >
             <Award size={10} />
-            Certified
+            View Certificate
           </a>
         )}
       </div>
