@@ -1,4 +1,4 @@
-import { useState } from "react";
+import { useState, useMemo } from "react";
 import { Sparkles, FileText, Calendar, ChevronDown, ChevronUp, Loader2 } from "lucide-react";
 import { toast } from "sonner";
 import type { AIReport } from "@/types/claro";
@@ -7,6 +7,22 @@ interface Props {
   reports: AIReport[];
   orgContract: string;
   onReportGenerated: () => void;
+}
+
+/** Lightweight markdown-to-HTML for Gemini output */
+function renderMarkdown(text: string): string {
+  return text
+    .replace(/^### (.+)$/gm, '<h4 class="font-semibold text-gray-900 mt-3 mb-1 text-sm">$1</h4>')
+    .replace(/^## (.+)$/gm, '<h3 class="font-semibold text-gray-900 mt-4 mb-1 text-sm">$1</h3>')
+    .replace(/^# (.+)$/gm, '<h3 class="font-bold text-gray-900 mt-4 mb-2 text-base">$1</h3>')
+    .replace(/\*\*\*(.+?)\*\*\*/g, '<strong><em>$1</em></strong>')
+    .replace(/\*\*(.+?)\*\*/g, '<strong>$1</strong>')
+    .replace(/\*(.+?)\*/g, '<em>$1</em>')
+    .replace(/\[([^\]]+)\]\(([^)]+)\)/g, '<a href="$2" target="_blank" rel="noopener noreferrer" class="text-[#1A56DB] hover:underline break-all">$1</a>')
+    .replace(/(^|[^"'])(https?:\/\/[^\s<]+)/g, '$1<a href="$2" target="_blank" rel="noopener noreferrer" class="text-[#1A56DB] hover:underline break-all">$2</a>')
+    .replace(/^[-*] (.+)$/gm, '<li class="ml-4 list-disc">$1</li>')
+    .replace(/\n\n+/g, '</p><p class="mt-2">')
+    .replace(/\n/g, '<br/>');
 }
 
 export default function AIReportPanel({ reports, orgContract, onReportGenerated }: Props) {
@@ -41,16 +57,16 @@ export default function AIReportPanel({ reports, orgContract, onReportGenerated 
   };
 
   return (
-    <div className="bg-white border border-gray-200 rounded-xl p-5 shadow-sm">
-      <div className="flex items-center justify-between mb-4">
+    <div className="bg-white border border-gray-200 rounded-xl p-4 sm:p-5 shadow-sm overflow-hidden">
+      <div className="flex flex-col gap-2 sm:flex-row sm:items-center sm:justify-between mb-4">
         <div className="flex items-center gap-2">
-          <Sparkles className="text-[#E3A008]" style={{ width: 20, height: 20 }} />
+          <Sparkles className="text-[#E3A008] shrink-0" style={{ width: 20, height: 20 }} />
           <p className="text-base font-semibold text-gray-900">AI Transparency Reports</p>
         </div>
         <button
           onClick={handleGenerate}
           disabled={generateState === "loading"}
-          className="bg-[#0A0E1A] text-white text-xs px-3 py-1.5 rounded-md flex items-center gap-1.5 hover:opacity-90 disabled:opacity-50 active:scale-[0.97]"
+          className="bg-[#0A0E1A] text-white text-xs px-3 py-1.5 rounded-md flex items-center justify-center gap-1.5 hover:opacity-90 disabled:opacity-50 active:scale-[0.97] w-full sm:w-auto"
         >
           {generateState === "loading" ? (
             <Loader2 className="animate-spin" style={{ width: 10, height: 10 }} />
@@ -70,16 +86,17 @@ export default function AIReportPanel({ reports, orgContract, onReportGenerated 
         <div className="space-y-3">
           {reports.map((r) => {
             const expanded = expandedId === r.id;
+            const html = renderMarkdown(r.report_text);
             return (
-              <div key={r.id} className="bg-gray-50 rounded-xl p-4">
-                <div className="flex items-center justify-between mb-2">
+              <div key={r.id} className="bg-gray-50 rounded-xl p-3 sm:p-4 min-w-0">
+                <div className="flex flex-col gap-1 sm:flex-row sm:items-center sm:justify-between mb-2">
                   <div className="flex items-center gap-2">
-                    <Calendar className="text-gray-400" style={{ width: 12, height: 12 }} />
+                    <Calendar className="text-gray-400 shrink-0" style={{ width: 12, height: 12 }} />
                     <span className="text-xs text-gray-500">
                       {new Date(r.generated_at).toLocaleDateString()}
                     </span>
                   </div>
-                  <div className="flex items-center gap-2">
+                  <div className="flex items-center gap-2 flex-wrap">
                     <span className="bg-gray-200 text-gray-600 text-xs px-2 py-0.5 rounded">{r.model_used}</span>
                     {r.total_usd != null && r.total_usd > 0 && (
                       <span className="text-xs text-gray-500">${r.total_usd.toFixed(2)} total</span>
@@ -87,9 +104,10 @@ export default function AIReportPanel({ reports, orgContract, onReportGenerated 
                   </div>
                 </div>
 
-                <p className={`text-sm text-gray-700 leading-relaxed ${expanded ? "whitespace-pre-wrap" : "line-clamp-3"}`}>
-                  {r.report_text}
-                </p>
+                <div
+                  className={`text-sm text-gray-700 leading-relaxed break-words overflow-wrap-anywhere ${expanded ? "" : "line-clamp-3"}`}
+                  dangerouslySetInnerHTML={{ __html: html }}
+                />
 
                 <button
                   onClick={() => setExpandedId(expanded ? null : r.id)}
