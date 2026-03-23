@@ -48,6 +48,14 @@ export const publicRoutes: RouteObject[] = [
           </Suspense>
         ),
       },
+      {
+        path: "audit",
+        element: (
+          <Suspense fallback={<PageLoader />}>
+            <AuditPage />
+          </Suspense>
+        ),
+      },
     ],
   },
 ];

@@ -21,6 +21,10 @@ export default function TopNavbar() {
         <Link to="/explore" className="text-sm text-muted-foreground hover:text-foreground transition-colors">
           Explore
         </Link>
+        <Link to="/audit" className="text-sm text-muted-foreground hover:text-foreground transition-colors flex items-center gap-1">
+          <ShieldCheck style={{ width: 12, height: 12 }} />
+          Audit Log
+        </Link>
 
         {!connected && (
           <>

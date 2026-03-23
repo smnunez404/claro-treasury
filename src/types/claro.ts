@@ -355,3 +355,32 @@ export interface DeployResult {
   txHash: string;
   orgName: string;
 }
+
+export interface AuditEntry {
+  id: string;
+  org_contract: string;
+  org_name: string | null;
+  org_verified: boolean;
+  action: string;
+  actor_address: string | null;
+  target_address: string | null;
+  amount_avax: number | null;
+  amount_usd: number | null;
+  tx_hash: string | null;
+  metadata: Record<string, unknown> | null;
+  occurred_at: string;
+}
+
+export interface AuditFiltersState {
+  orgContract: string;
+  actionType: string;
+  dateFrom: string;
+  dateTo: string;
+}
+
+export interface AuditStats {
+  totalEntries: number;
+  totalOrgs: number;
+  totalVerified: number;
+  totalUsd: number;
+}
