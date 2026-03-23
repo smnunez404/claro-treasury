@@ -9,7 +9,7 @@ import AuditFilters from "@/components/audit/AuditFilters";
 import AuditLogTable from "@/components/audit/AuditLogTable";
 import AuditSkeleton from "@/components/audit/AuditSkeleton";
 
-const EMPTY_FILTERS: AuditFiltersState = { orgContract: "", actionType: "", dateFrom: "", dateTo: "" };
+const EMPTY_FILTERS: AuditFiltersState = { orgContract: "", actionType: "exclude_sync", dateFrom: "", dateTo: "" };
 
 export default function AuditPage() {
   const queryClient = useQueryClient();
