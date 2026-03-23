@@ -18,6 +18,13 @@ export const CLARO_MATCHING_ABI = [
   "function getProjectStats(uint256 roundId, string memory projectId) external view returns (uint256 totalAmount, uint256 uniqueDonors)",
   "function calculateMatching(uint256 roundId) external view returns (string[] memory projectIds, uint256[] memory amounts)",
   "function getTimeRemaining(uint256 roundId) external view returns (uint256)",
+  "function createRound(string[] memory projectIds, uint256 durationSeconds) external payable",
+  "function contribute(string memory projectId) external payable",
+  "function getRound() external view returns (string[] memory projectIds, uint256 startTime, uint256 endTime, uint256 matchingPool, bool active)",
+  "function getProjectContributions(string memory projectId) external view returns (uint256 total, uint256 uniqueDonors)",
+  "function getTimeRemaining() external view returns (uint256)",
+  "function calculateMatching(string memory projectId) external view returns (uint256)",
+  "function distributeMatching() external",
 ] as const;
 
 export const YAIS_TREASURY_ABI = [

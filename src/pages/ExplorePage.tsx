@@ -1,16 +1,18 @@
-import { useMemo } from "react";
+import { useState, useMemo } from "react";
 import { useQuery } from "@tanstack/react-query";
 import { Link } from "react-router-dom";
 import { ethers } from "ethers";
-import { Shield, Compass, AlertCircle } from "lucide-react";
+import { Shield, Compass, AlertCircle, Zap } from "lucide-react";
 import { supabase } from "@/lib/supabaseClient";
 import { RPC_URL, MATCHING_ADDRESS, avaxToUsd } from "@/lib/constants";
 import { CLARO_MATCHING_ABI } from "@/lib/abis";
-import type { OrgCard as OrgCardType, QFRound, ProtocolStats as ProtocolStatsType } from "@/types/claro";
+import type { OrgCard as OrgCardType, QFRound, ProtocolStats as ProtocolStatsType, QFProjectData } from "@/types/claro";
 import OrgCard from "@/components/explore/OrgCard";
 import OrgCardSkeleton from "@/components/explore/OrgCardSkeleton";
 import QFBanner from "@/components/explore/QFBanner";
 import ProtocolStatsBar from "@/components/explore/ProtocolStats";
+import QFContributeModal from "@/components/explore/QFContributeModal";
+import { useQFRound } from "@/hooks/useQFRound";
 
 export default function ExplorePage() {
   // Query 1 — org cards combined data
@@ -72,31 +74,18 @@ export default function ExplorePage() {
     },
   });
 
-  // Query 4 — QF round from blockchain
-  const qfQuery = useQuery({
-    queryKey: ["qf-round"],
-    queryFn: async (): Promise<QFRound | null> => {
-      try {
-        const provider = new ethers.JsonRpcProvider(RPC_URL);
-        const matching = new ethers.Contract(MATCHING_ADDRESS, CLARO_MATCHING_ABI, provider);
-        const roundId: bigint = await matching.currentRoundId();
-        const round = await matching.getRound(roundId);
-        const [matchingPool, , endTime, active] = round;
-        const poolAvax = Number(ethers.formatEther(matchingPool));
-        const hoursRemaining = Math.max(0, Math.floor((Number(endTime) - Date.now() / 1000) / 3600));
-        return {
-          matchingPoolAvax: poolAvax,
-          matchingPoolUsd: avaxToUsd(poolAvax),
-          endTime: Number(endTime),
-          hoursRemaining,
-          isActive: active && hoursRemaining > 0,
-        };
-      } catch {
-        return null;
-      }
-    },
-    staleTime: 5 * 60 * 1000,
-  });
+  // QF Round from useQFRound hook
+  const {
+    round: qfRound,
+    projects: qfProjects,
+    isLoading: isQfLoading,
+    contribute,
+    contributeStep,
+    contributeError,
+    resetContribute,
+  } = useQFRound();
+
+  const [contributeTarget, setContributeTarget] = useState<QFProjectData | null>(null);
 
   // Merge org data
   const metaData = metaQuery.data;
@@ -123,6 +112,18 @@ export default function ExplorePage() {
       logo_url: orgMeta.get(org.contract_address ?? "")?.logo_url ?? null,
     }));
   }, [orgsQuery.data, orgMeta]);
+
+  // Build a map of org contract -> QF projects for that org
+  const qfByOrg = useMemo(() => {
+    const map = new Map<string, QFProjectData[]>();
+    for (const p of qfProjects) {
+      if (!p.orgContract) continue;
+      const existing = map.get(p.orgContract) ?? [];
+      existing.push(p);
+      map.set(p.orgContract, existing);
+    }
+    return map;
+  }, [qfProjects]);
 
   const scrollToOrgs = () => {
     document.getElementById("organizations")?.scrollIntoView({ behavior: "smooth" });
@@ -165,7 +166,7 @@ export default function ExplorePage() {
       </section>
 
       {/* SECTION 2 — QF BANNER */}
-      <QFBanner round={qfQuery.data} isLoading={qfQuery.isLoading} />
+      <QFBanner round={qfRound} isLoading={isQfLoading} onScrollToOrgs={scrollToOrgs} />
 
       {/* SECTION 3 — PROTOCOL STATS */}
       <ProtocolStatsBar stats={statsQuery.data} isLoading={statsQuery.isLoading} isError={statsQuery.isError} />
@@ -221,18 +222,50 @@ export default function ExplorePage() {
           {/* With data */}
           {orgsQuery.isSuccess && mergedOrgs.length > 0 && (
             <div className="grid grid-cols-1 md:grid-cols-2 lg:grid-cols-3 gap-6">
-              {mergedOrgs.map((org) => (
-                <OrgCard
-                  key={org.contract_address}
-                  org={org}
-                  logoUrl={orgMeta.get(org.contract_address)?.logo_url ?? null}
-                  website={orgMeta.get(org.contract_address)?.website ?? null}
-                />
-              ))}
+              {mergedOrgs.map((org) => {
+                const orgQfProjects = qfByOrg.get(org.contract_address) ?? [];
+                return (
+                  <div key={org.contract_address} className="flex flex-col">
+                    <OrgCard
+                      org={org}
+                      logoUrl={orgMeta.get(org.contract_address)?.logo_url ?? null}
+                      website={orgMeta.get(org.contract_address)?.website ?? null}
+                    />
+                    {qfRound.active && orgQfProjects.length > 0 && (
+                      <div className="bg-amber-50 border border-amber-100 border-t-0 rounded-b-xl px-4 py-2 flex items-center justify-between -mt-1">
+                        <span className="flex items-center gap-1 text-xs text-amber-700">
+                          <Zap className="text-amber-500" style={{ width: 12, height: 12 }} />
+                          QF Round Active
+                        </span>
+                        <button
+                          onClick={() => setContributeTarget(orgQfProjects[0])}
+                          className="bg-amber-500 text-white text-xs px-3 py-1 rounded-md hover:bg-amber-600 transition-colors"
+                        >
+                          Contribute
+                        </button>
+                      </div>
+                    )}
+                  </div>
+                );
+              })}
             </div>
           )}
         </div>
       </section>
+
+      {/* QF Contribute Modal */}
+      {contributeTarget && (
+        <QFContributeModal
+          isOpen={contributeTarget !== null}
+          onClose={() => { setContributeTarget(null); resetContribute(); }}
+          project={contributeTarget}
+          round={qfRound}
+          onContribute={contribute}
+          contributeStep={contributeStep}
+          contributeError={contributeError}
+          onReset={resetContribute}
+        />
+      )}
     </div>
   );
 }
