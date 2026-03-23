@@ -30,6 +30,7 @@ export default function TopNavbar() {
           <Link to="/stats" className="text-xs sm:text-sm text-muted-foreground hover:text-foreground transition-colors flex items-center gap-1">
             <BarChart3 style={{ width: 12, height: 12 }} />
             Stats
+          </Link>
 
           {!connected && (
             <>
