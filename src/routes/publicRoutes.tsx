@@ -57,6 +57,14 @@ export const publicRoutes: RouteObject[] = [
           </Suspense>
         ),
       },
+      {
+        path: "stats",
+        element: (
+          <Suspense fallback={<PageLoader />}>
+            <StatsPage />
+          </Suspense>
+        ),
+      },
     ],
   },
 ];

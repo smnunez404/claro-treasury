@@ -27,6 +27,9 @@ export default function TopNavbar() {
             <span className="hidden sm:inline">Audit Log</span>
             <span className="sm:hidden">Audit</span>
           </Link>
+          <Link to="/stats" className="text-xs sm:text-sm text-muted-foreground hover:text-foreground transition-colors flex items-center gap-1">
+            <BarChart3 style={{ width: 12, height: 12 }} />
+            Stats
 
           {!connected && (
             <>

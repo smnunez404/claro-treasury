@@ -31,6 +31,7 @@ const adminItems = [
   { title: "Organizations", url: "/admin", icon: Building2 },
   { title: "Explore", url: "/explore", icon: Compass },
   { title: "Audit Log", url: "/audit", icon: ShieldCheck },
+  { title: "Stats", url: "/stats", icon: BarChart3 },
 ];
 
 export default function Sidebar() {
