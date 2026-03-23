@@ -18,7 +18,7 @@ interface Props {
   data: DailyPoint[];
 }
 
-function CustomTooltip({ active, payload }: any) {
+const CustomTooltip = ({ active, payload }: any) => {
   if (!active || !payload?.length) return null;
   const d = payload[0].payload as DailyPoint;
   return (
