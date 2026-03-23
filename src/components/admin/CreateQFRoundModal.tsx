@@ -7,7 +7,7 @@ import { Dialog, DialogContent, DialogTitle, DialogDescription } from "@/compone
 import { Checkbox } from "@/components/ui/checkbox";
 import { Input } from "@/components/ui/input";
 import { CLARO_MATCHING_ABI } from "@/lib/abis";
-import { MATCHING_ADDRESS, CHAIN_ID, AVAX_TO_USD } from "@/lib/constants";
+import { MATCHING_ADDRESS, CHAIN_ID, AVAX_TO_USD, RPC_URL } from "@/lib/constants";
 import { supabase } from "@/lib/supabaseClient";
 import type { AdminOrgRow, CreateRoundStep } from "@/types/claro";
 
@@ -64,9 +64,12 @@ export default function CreateQFRoundModal({ isOpen, onClose, orgs }: Props) {
     );
   }
 
+  const [confirmSubStep, setConfirmSubStep] = useState<1 | 2>(1);
+
   async function handleCreate() {
     if (selectedProjectIds.length === 0) return;
     setStep("confirming");
+    setConfirmSubStep(1);
     setError(null);
 
     try {
@@ -79,15 +82,22 @@ export default function CreateQFRoundModal({ isOpen, onClose, orgs }: Props) {
       const signer = await provider.getSigner();
 
       const matching = new ethers.Contract(MATCHING_ADDRESS, CLARO_MATCHING_ABI, signer);
-      const durationSeconds = BigInt(durationHours * 3600);
-      const matchingWei = ethers.parseEther(matchingPoolAvax.toFixed(6));
 
-      const tx = await matching.createRound(
-        selectedProjectIds,
-        durationSeconds,
-        { value: matchingWei }
-      );
-      await tx.wait(1);
+      // Step 1: createRound (no value)
+      const durationSeconds = BigInt(durationHours * 3600);
+      const tx1 = await matching.createRound(durationSeconds, selectedProjectIds);
+      await tx1.wait(1);
+
+      // Get the new roundId
+      const readProvider = new ethers.JsonRpcProvider(RPC_URL);
+      const readMatching = new ethers.Contract(MATCHING_ADDRESS, CLARO_MATCHING_ABI, readProvider);
+      const newRoundId = await readMatching.roundCount();
+
+      // Step 2: fundMatchingPool (send AVAX)
+      setConfirmSubStep(2);
+      const matchingWei = ethers.parseEther(matchingPoolAvax.toFixed(6));
+      const tx2 = await matching.fundMatchingPool(newRoundId, { value: matchingWei });
+      await tx2.wait(1);
 
       queryClient.invalidateQueries({ queryKey: ["qf-round"] });
       setStep("success");
@@ -213,7 +223,11 @@ export default function CreateQFRoundModal({ isOpen, onClose, orgs }: Props) {
         {step === "confirming" && (
           <div className="flex flex-col items-center py-8">
             <Loader2 className="animate-spin text-[#1A56DB]" style={{ width: 32, height: 32 }} />
-            <p className="text-sm text-gray-700 mt-3 text-center">Creating QF Round...</p>
+            <p className="text-sm text-gray-700 mt-3 text-center">
+              {confirmSubStep === 1
+                ? "Step 1 of 2: Creating round structure..."
+                : "Step 2 of 2: Funding matching pool..."}
+            </p>
             <p className="text-xs text-gray-400 mt-1 text-center">Please confirm in your wallet.</p>
             <p className="text-xs text-gray-500 mt-2 text-center">
               {selectedProjectIds.length} projects · {durationHours}h · {matchingPoolAvax} AVAX pool

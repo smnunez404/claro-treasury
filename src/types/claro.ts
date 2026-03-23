@@ -425,12 +425,14 @@ export interface ProtocolFullStats {
 
 // Sprint 12 — QF Round (full)
 export interface QFRoundFull2 {
+  roundId: number;
   projectIds: string[];
   startTime: number;
   endTime: number;
   matchingPoolAvax: number;
   matchingPoolUsd: number;
   active: boolean;
+  distributed: boolean;
   timeRemainingSeconds: number;
 }
 
