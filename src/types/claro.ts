@@ -310,6 +310,26 @@ export type DisburseStep = "idle" | "confirming" | "success" | "error";
 
 export type CreateGrantStep = "idle" | "confirming" | "success" | "error";
 
+export interface TreasuryAnalyticsData {
+  dailyVolume: {
+    date: string;
+    income_usd: number;
+    expense_usd: number;
+  }[];
+  totalIncomeUsd: number;
+  totalExpenseUsd: number;
+  netUsd: number;
+  uniqueDonors: number;
+  txCount: number;
+  breakdown: {
+    type: string;
+    label: string;
+    amount_usd: number;
+    count: number;
+    color: string;
+  }[];
+}
+
 export interface AdminOrgRow {
   contract_address: string;
   owner_address: string;
