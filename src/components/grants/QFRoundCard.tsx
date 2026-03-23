@@ -1,5 +1,5 @@
 import { Clock, Layers, Info, Users, TrendingUp } from "lucide-react";
-import type { QFRoundFull2, QFProjectData } from "@/types/claro";
+import type { QFRoundFull, GrantFull, QFRoundFull2, QFProjectData } from "@/types/claro";
 
 function formatTimeRemaining(seconds: number): string {
   if (seconds <= 0) return "Round ended";
@@ -11,18 +11,71 @@ function formatTimeRemaining(seconds: number): string {
   return `${m}m remaining`;
 }
 
-interface Props {
+// Support both legacy props (from GrantsPage) and new props (from useQFRound)
+interface LegacyProps {
+  qfRound: QFRoundFull | null;
+  isLoading: boolean;
+  orgGrants: GrantFull[];
+  round?: never;
+  projects?: never;
+}
+
+interface NewProps {
   round: QFRoundFull2;
   projects: QFProjectData[];
   isLoading: boolean;
+  qfRound?: never;
+  orgGrants?: never;
 }
 
-export default function QFRoundCard({ round, projects, isLoading }: Props) {
+type Props = LegacyProps | NewProps;
+
+export default function QFRoundCard(props: Props) {
+  const { isLoading } = props;
+
   if (isLoading) {
     return <div className="bg-white border border-gray-200 rounded-xl h-32 animate-pulse" />;
   }
 
-  if (!round.active) {
+  // Normalize to common shape
+  let active = false;
+  let matchingPoolUsd = "0.00";
+  let timeLabel = "";
+  let projectCount = 0;
+  let projectRows: { id: string; name: string; donors: number; raised: string; match: string }[] = [];
+
+  if ("qfRound" in props && props.qfRound) {
+    // Legacy path
+    const qf = props.qfRound;
+    active = qf.isActive;
+    matchingPoolUsd = qf.matchingPoolUsd;
+    timeLabel = `${qf.hoursRemaining}h ${qf.minutesRemaining}m remaining`;
+    projectCount = qf.projects.length;
+    const grantNameMap = new Map((props.orgGrants ?? []).map((g) => [g.projectId, g.projectName]));
+    projectRows = qf.projects.map((s) => ({
+      id: s.projectId,
+      name: grantNameMap.get(s.projectId) ?? s.projectName,
+      donors: s.uniqueDonors,
+      raised: s.totalContribUsd,
+      match: s.projectedMatchingUsd,
+    }));
+  } else if ("round" in props && props.round) {
+    // New path
+    const r = props.round;
+    active = r.active;
+    matchingPoolUsd = r.matchingPoolUsd.toFixed(2);
+    timeLabel = formatTimeRemaining(r.timeRemainingSeconds);
+    projectCount = r.projectIds.length;
+    projectRows = (props.projects ?? []).map((p) => ({
+      id: p.projectId,
+      name: p.projectName,
+      donors: p.uniqueDonors,
+      raised: p.totalContributedUsd.toFixed(2),
+      match: p.projectedMatchingUsd.toFixed(2),
+    }));
+  }
+
+  if (!active) {
     return (
       <div className="bg-white border border-gray-200 rounded-xl p-6">
         <p className="text-base font-semibold text-gray-900 mb-4">Quadratic Funding</p>
@@ -40,23 +93,21 @@ export default function QFRoundCard({ round, projects, isLoading }: Props) {
       <div className="flex items-center justify-between mb-4">
         <div className="flex items-center gap-2">
           <div className="bg-[#057A55] w-2 h-2 rounded-full animate-pulse" />
-          <p className="text-base font-semibold text-gray-900">
-            Quadratic Funding Round
-          </p>
+          <p className="text-base font-semibold text-gray-900">Quadratic Funding Round</p>
         </div>
         <span className="bg-amber-50 border border-amber-200 text-amber-700 text-xs px-3 py-1 rounded-full flex items-center gap-1">
           <Clock style={{ width: 10, height: 10 }} />
-          {formatTimeRemaining(round.timeRemainingSeconds)}
+          {timeLabel}
         </span>
       </div>
 
       <div className="bg-gradient-to-r from-[#0A0E1A] to-[#1A56DB] rounded-xl p-4 mb-4 flex items-center justify-between">
         <div>
           <p className="text-blue-200 text-xs uppercase">Matching Pool</p>
-          <p className="text-white text-2xl font-bold">${round.matchingPoolUsd.toFixed(2)}</p>
+          <p className="text-white text-2xl font-bold">${matchingPoolUsd}</p>
         </div>
         <p className="text-blue-200 text-xs">
-          {round.projectIds.length} projects · {formatTimeRemaining(round.timeRemainingSeconds)}
+          {projectCount} projects · {timeLabel}
         </p>
       </div>
 
@@ -73,29 +124,25 @@ export default function QFRoundCard({ round, projects, isLoading }: Props) {
         ))}
       </div>
 
-      {projects.length === 0 ? (
+      {projectRows.length === 0 ? (
         <p className="text-sm text-gray-400 text-center py-4">No projects in this round yet.</p>
       ) : (
         <div className="space-y-2">
-          {projects.map((p) => (
+          {projectRows.map((p) => (
             <div
-              key={p.projectId}
+              key={p.id}
               className="grid grid-cols-2 sm:grid-cols-4 gap-2 px-3 py-2 bg-gray-50 rounded-lg"
             >
-              <div>
-                <p className="text-sm font-medium text-gray-900 truncate">{p.projectName}</p>
-              </div>
+              <p className="text-sm font-medium text-gray-900 truncate">{p.name}</p>
               <div className="hidden sm:flex items-center gap-1 text-sm text-gray-600">
                 <Users style={{ width: 12, height: 12 }} className="text-gray-400" />
-                {p.uniqueDonors}
+                {p.donors}
               </div>
-              <div className="hidden sm:block text-sm text-gray-600">
-                ${p.totalContributedUsd.toFixed(2)}
-              </div>
+              <p className="hidden sm:block text-sm text-gray-600">${p.raised}</p>
               <div className="text-right sm:text-left">
                 <span className="text-sm font-semibold text-[#057A55] flex items-center gap-1 justify-end sm:justify-start">
                   <TrendingUp style={{ width: 12, height: 12 }} />
-                  ${p.projectedMatchingUsd.toFixed(2)}
+                  ${p.match}
                 </span>
               </div>
             </div>
