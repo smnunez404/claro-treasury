@@ -9,7 +9,7 @@ import AuditFilters from "@/components/audit/AuditFilters";
 import AuditLogTable from "@/components/audit/AuditLogTable";
 import AuditSkeleton from "@/components/audit/AuditSkeleton";
 
-const EMPTY_FILTERS: AuditFiltersState = { orgContract: "", actionType: "", dateFrom: "", dateTo: "" };
+const EMPTY_FILTERS: AuditFiltersState = { orgContract: "", actionType: "exclude_sync", dateFrom: "", dateTo: "" };
 
 export default function AuditPage() {
   const queryClient = useQueryClient();
@@ -56,7 +56,9 @@ export default function AuditPage() {
           query = query.ilike("org_contract", `%${filters.orgContract}%`);
         }
       }
-      if (filters.actionType) {
+      if (filters.actionType === "exclude_sync") {
+        query = query.neq("action", "org_synced_from_blockchain");
+      } else if (filters.actionType) {
         query = query.eq("action", filters.actionType);
       }
       if (filters.dateFrom) {

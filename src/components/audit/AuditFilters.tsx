@@ -8,7 +8,8 @@ interface Props {
 }
 
 const ACTION_OPTIONS = [
-  { value: "", label: "All actions" },
+  { value: "exclude_sync", label: "All meaningful actions" },
+  { value: "", label: "All actions (including syncs)" },
   { value: "grant_deposit", label: "Donation Received" },
   { value: "grant_certified", label: "Impact Certified" },
   { value: "payroll_executed", label: "Payroll Payment" },
@@ -21,7 +22,7 @@ const ACTION_OPTIONS = [
 
 export default function AuditFilters({ filters, onChange }: Props) {
   const [orgInput, setOrgInput] = useState(filters.orgContract);
-  const hasFilters = filters.orgContract || filters.actionType || filters.dateFrom || filters.dateTo;
+  const hasFilters = filters.orgContract || filters.actionType !== "exclude_sync" || filters.dateFrom || filters.dateTo;
 
   // Debounce org input — wait 500ms after user stops typing
   useEffect(() => {
@@ -95,7 +96,7 @@ export default function AuditFilters({ filters, onChange }: Props) {
           <button
             onClick={() => {
               setOrgInput("");
-              onChange({ orgContract: "", actionType: "", dateFrom: "", dateTo: "" });
+              onChange({ orgContract: "", actionType: "exclude_sync", dateFrom: "", dateTo: "" });
             }}
             className="text-xs text-gray-500 hover:text-gray-700 flex items-center gap-1 pb-2"
           >
