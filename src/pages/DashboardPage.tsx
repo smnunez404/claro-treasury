@@ -10,6 +10,7 @@ import GrantsList from "@/components/dashboard/GrantsList";
 import DashboardQFCard from "@/components/dashboard/DashboardQFCard";
 import OnramperModal from "@/components/dashboard/OnramperModal";
 import DashboardSkeleton from "@/components/dashboard/DashboardSkeleton";
+import TreasuryAnalytics from "@/components/dashboard/TreasuryAnalytics";
 
 export default function DashboardPage() {
   const { orgContractAddress, address } = useAuth();
@@ -49,6 +50,8 @@ export default function DashboardPage() {
       />
 
       {qfRound?.isActive && <DashboardQFCard qfRound={qfRound} />}
+
+      {orgContractAddress && <TreasuryAnalytics orgContract={orgContractAddress} />}
 
       <div className="grid lg:grid-cols-3 gap-6">
         <div className="lg:col-span-2 space-y-6">
