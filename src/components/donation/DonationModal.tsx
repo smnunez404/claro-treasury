@@ -221,5 +221,16 @@ export default function DonationModal({ isOpen, onClose, orgContract, orgName }:
         )}
       </DialogContent>
     </Dialog>
+
+    <OnramperModal
+      isOpen={showOnramper}
+      onClose={() => {
+        setShowOnramper(false);
+        if (address) fetchBalance(address);
+      }}
+      mode="buy"
+      walletAddress={address ?? ""}
+    />
+    </>
   );
 }
