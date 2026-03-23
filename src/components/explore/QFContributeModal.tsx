@@ -150,13 +150,13 @@ export default function QFContributeModal({
 
               {/* Quick amounts */}
               <div className="flex gap-2 mt-2">
-                {[1, 5, 10].map((v) => (
+                {[0.18, 0.36, 0.54, 1, 5, 10].map((v) => (
                   <button
                     key={v}
                     onClick={() => setAmountUsd(v)}
                     className="text-xs border border-border rounded-md px-2 py-1 cursor-pointer hover:bg-muted"
                   >
-                    ${v}
+                    ${v < 1 ? v.toFixed(2) : v}
                   </button>
                 ))}
               </div>
