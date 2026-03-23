@@ -450,3 +450,39 @@ export interface QFProjectData {
 export type CreateRoundStep = "idle" | "confirming" | "success" | "error";
 
 export type ContributeStep = "idle" | "amount" | "confirming" | "success" | "error";
+
+export interface HypercertData {
+  txHash: string;
+  certifiedAt: string | null;
+  certifiedBy: string | null;
+  projectId: string;
+  projectName: string;
+  projectDescription: string | null;
+  projectCategory: string | null;
+  projectStatus: string;
+  onchainProjectId: string | null;
+  websiteUrl: string | null;
+  orgContract: string;
+  orgName: string;
+  orgCountry: string;
+  orgVerified: boolean;
+  orgDescription: string | null;
+  totalRaisedUsd: number;
+  totalDisbursedUsd: number;
+  uniqueDonors: number;
+  metrics: {
+    id: string;
+    metric_name: string;
+    metric_value: string;
+    metric_unit: string | null;
+    verified: boolean;
+  }[];
+  milestones: {
+    id: string;
+    title: string;
+    status: string;
+    completed_date: string | null;
+    evidence_url: string | null;
+  }[];
+  transparencyScore: number;
+}
