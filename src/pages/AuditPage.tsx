@@ -34,6 +34,16 @@ export default function AuditPage() {
   const { data: logData, isLoading, isError } = useQuery({
     queryKey: ["audit-log", filters, page],
     queryFn: async () => {
+      // Fetch org names for case-insensitive fallback lookup
+      const { data: orgsData } = await supabase
+        .from("claro_organizations")
+        .select("contract_address, name, verified")
+        .eq("is_active", true);
+      const orgNames = new Map<string, { name: string; verified: boolean }>();
+      (orgsData ?? []).forEach((o) =>
+        orgNames.set(o.contract_address.toLowerCase(), { name: o.name, verified: o.verified ?? false })
+      );
+
       let query = supabase
         .from("claro_audit_log")
         .select("id, org_contract, action, actor_address, target_address, amount_avax, amount_usd, tx_hash, metadata, occurred_at", { count: "exact" })
@@ -41,7 +51,6 @@ export default function AuditPage() {
         .range(page * 50, (page + 1) * 50 - 1);
 
       if (filters.orgContract) {
-        // Find matching contract addresses by name from orgMap
         const term = filters.orgContract.toLowerCase();
         const matchingContracts: string[] = [];
         orgMap?.forEach((org, addr) => {
@@ -49,7 +58,6 @@ export default function AuditPage() {
             matchingContracts.push(addr);
           }
         });
-        // Also match by contract address directly
         if (matchingContracts.length > 0) {
           query = query.in("org_contract", matchingContracts);
         } else {
@@ -57,7 +65,14 @@ export default function AuditPage() {
         }
       }
       if (filters.actionType === "exclude_sync") {
-        query = query.neq("action", "org_synced_from_blockchain");
+        const excludedActions = [
+          "org_synced_from_blockchain",
+          "update_project",
+          "update_milestone",
+          "update_metric",
+          "update_team_member",
+        ];
+        query = query.not("action", "in", `(${excludedActions.join(",")})`);
       } else if (filters.actionType) {
         query = query.eq("action", filters.actionType);
       }
@@ -72,12 +87,13 @@ export default function AuditPage() {
       if (error) throw error;
 
       const entries: AuditEntry[] = (data ?? []).map((row) => {
-        const org = orgMap?.get(row.org_contract);
+        const orgFromMap = orgMap?.get(row.org_contract);
+        const orgFallback = orgNames.get(row.org_contract?.toLowerCase());
         return {
           id: row.id,
           org_contract: row.org_contract,
-          org_name: org?.name ?? null,
-          org_verified: org?.verified ?? false,
+          org_name: orgFromMap?.name ?? orgFallback?.name ?? null,
+          org_verified: orgFromMap?.verified ?? orgFallback?.verified ?? false,
           action: row.action,
           actor_address: row.actor_address,
           target_address: row.target_address,
