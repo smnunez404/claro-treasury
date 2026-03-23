@@ -1,9 +1,10 @@
-import { useState } from "react";
-import { Shield, Loader2, XCircle } from "lucide-react";
+import { useState, useEffect } from "react";
+import { Shield, Loader2, XCircle, AlertTriangle, CreditCard, ExternalLink, Wallet } from "lucide-react";
+import { ethers } from "ethers";
 import { useAuth } from "@/contexts/AuthContext";
 import { usePrivy } from "@privy-io/react-auth";
 import { useDonation } from "@/hooks/useDonation";
-import { AVAX_TO_USD, SNOWTRACE_URL } from "@/lib/constants";
+import { AVAX_TO_USD, RPC_URL, SNOWTRACE_URL } from "@/lib/constants";
 import {
   Dialog,
   DialogContent,
@@ -13,6 +14,7 @@ import {
 import AmountInput from "./AmountInput";
 import GrantSelector from "./GrantSelector";
 import DonationSuccess from "./DonationSuccess";
+import OnramperModal from "@/components/dashboard/OnramperModal";
 
 interface Props {
   isOpen: boolean;
