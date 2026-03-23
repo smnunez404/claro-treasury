@@ -13,6 +13,7 @@ import {
   Building2,
   MapPin,
   LogOut,
+  ShieldCheck,
 } from "lucide-react";
 
 const orgOwnerItems = [
@@ -21,11 +22,13 @@ const orgOwnerItems = [
   { title: "Payroll", url: "/payroll", icon: Users },
   { title: "Grants", url: "/grants", icon: Gift },
   { title: "Explore", url: "/explore", icon: Compass },
+  { title: "Audit Log", url: "/audit", icon: ShieldCheck },
 ];
 
 const adminItems = [
   { title: "Organizations", url: "/admin", icon: Building2 },
   { title: "Explore", url: "/explore", icon: Compass },
+  { title: "Audit Log", url: "/audit", icon: ShieldCheck },
 ];
 
 export default function Sidebar() {

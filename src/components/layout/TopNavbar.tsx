@@ -1,4 +1,5 @@
 import { Link } from "react-router-dom";
+import { ShieldCheck } from "lucide-react";
 import { usePrivy } from "@privy-io/react-auth";
 import { useAuth } from "@/contexts/AuthContext";
 import { truncateAddress } from "@/lib/constants";
@@ -19,6 +20,10 @@ export default function TopNavbar() {
       <div className="flex items-center gap-4">
         <Link to="/explore" className="text-sm text-muted-foreground hover:text-foreground transition-colors">
           Explore
+        </Link>
+        <Link to="/audit" className="text-sm text-muted-foreground hover:text-foreground transition-colors flex items-center gap-1">
+          <ShieldCheck style={{ width: 12, height: 12 }} />
+          Audit Log
         </Link>
 
         {!connected && (
