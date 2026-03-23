@@ -125,8 +125,11 @@ export function useTreasury() {
         if (roundCount === 0) return null;
 
         const round = await matchingContract.getRound(roundCount);
-        const [matchingPool, , endTime, active, distributed] = round;
-        const hoursRemaining = Math.max(0, Math.floor((Number(endTime) - Date.now() / 1000) / 3600));
+        const endTime = Number(round[2]);
+        const matchingPool = round[3];
+        const distributed = round[4];
+        const active = round[5];
+        const hoursRemaining = Math.max(0, Math.floor((endTime - Date.now() / 1000) / 3600));
         const isActive = active && !distributed && hoursRemaining > 0;
         if (!isActive) return null;
 

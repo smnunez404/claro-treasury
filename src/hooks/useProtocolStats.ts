@@ -131,13 +131,20 @@ function useQfRound() {
           CLARO_MATCHING_ABI,
           provider
         );
-        const currentId = await matching.currentRoundId();
-        const round = await matching.getRound(currentId);
+        const roundCount = await matching.roundCount();
+        const count = Number(roundCount);
+        if (count === 0) {
+          clearTimeout(timeout);
+          return { qfRoundActive: false, qfMatchingPool: 0 };
+        }
+        const round = await matching.getRound(count);
         clearTimeout(timeout);
 
-        const active =
-          round && Number(round.endTime) > Math.floor(Date.now() / 1000);
-        const pool = Number(ethers.formatEther(round?.matchingPool ?? 0n));
+        const endTime = Number(round[2]);
+        const matchingPool = round[3];
+        const distributed = round[4];
+        const active = round[5] && !distributed && endTime > Math.floor(Date.now() / 1000);
+        const pool = Number(ethers.formatEther(matchingPool ?? 0n));
         return { qfRoundActive: active, qfMatchingPool: pool };
       } catch {
         clearTimeout(timeout);
