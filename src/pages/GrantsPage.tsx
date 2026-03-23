@@ -44,6 +44,7 @@ export default function GrantsPage() {
   if (isGrantsLoading) return <GrantsSkeleton />;
 
   return (
+    <>
     <div className="space-y-6">
       {/* Header */}
       <div className="flex flex-col gap-3 sm:flex-row sm:items-center sm:justify-between">
@@ -112,34 +113,34 @@ export default function GrantsPage() {
       <HypercertPanel grants={mergedGrants} orgContract={orgContractAddress!} />
     </div>
 
-      <CreateGrantSheet
-        isOpen={createSheetOpen}
-        onClose={() => setCreateSheetOpen(false)}
-        projects={projects}
-        createGrant={createGrant}
-        createStep={createStep}
-        createError={createError}
-        reset={reset}
-        onSuccess={() => { setCreateSheetOpen(false); reset(); refetchGrants(); }}
-      />
+    <CreateGrantSheet
+      isOpen={createSheetOpen}
+      onClose={() => setCreateSheetOpen(false)}
+      projects={projects}
+      createGrant={createGrant}
+      createStep={createStep}
+      createError={createError}
+      reset={reset}
+      onSuccess={() => { setCreateSheetOpen(false); reset(); refetchGrants(); }}
+    />
 
-      <DisburseModal
-        grant={disburseTarget as GrantFull | null}
-        isOpen={disburseTarget !== null}
-        onClose={() => { setDisburseTarget(null); reset(); }}
-        disburseGrant={disburseGrant}
-        disburseStep={disburseStep}
-        disburseError={disburseError}
-        disburseTxHash={disburseTxHash}
-        reset={reset}
-        treasuryBalanceAvax={treasuryData?.balanceAvax ?? 0}
-        onSuccess={() => {
-          setDisburseTarget(null);
-          reset();
-          refetchGrants();
-          queryClient.invalidateQueries({ queryKey: ["dashboard-activity", orgContractAddress] });
-        }}
-      />
-    </div>
+    <DisburseModal
+      grant={disburseTarget as GrantFull | null}
+      isOpen={disburseTarget !== null}
+      onClose={() => { setDisburseTarget(null); reset(); }}
+      disburseGrant={disburseGrant}
+      disburseStep={disburseStep}
+      disburseError={disburseError}
+      disburseTxHash={disburseTxHash}
+      reset={reset}
+      treasuryBalanceAvax={treasuryData?.balanceAvax ?? 0}
+      onSuccess={() => {
+        setDisburseTarget(null);
+        reset();
+        refetchGrants();
+        queryClient.invalidateQueries({ queryKey: ["dashboard-activity", orgContractAddress] });
+      }}
+    />
+    </>
   );
 }
