@@ -70,8 +70,9 @@ export function useProtocolStats() {
         { amount_usd: number; count: number }
       >();
       for (const tx of dailyTxs) {
-        if (!tx.block_timestamp) continue;
-        const date = tx.block_timestamp.slice(0, 10);
+        const ts = tx.block_timestamp ?? tx.created_at;
+        if (!ts) continue;
+        const date = ts.slice(0, 10);
         const existing = volumeMap.get(date) ?? { amount_usd: 0, count: 0 };
         volumeMap.set(date, {
           amount_usd: existing.amount_usd + (Number(tx.amount_usd) || 0),
