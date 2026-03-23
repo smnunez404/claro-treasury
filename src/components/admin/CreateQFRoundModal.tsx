@@ -74,7 +74,8 @@ export default function CreateQFRoundModal({ isOpen, onClose, orgs }: Props) {
       if (!wallet) throw new Error("No wallet connected");
 
       await wallet.switchChain(CHAIN_ID);
-      const provider = await wallet.getEthersProvider() as ethers.BrowserProvider;
+      const ethProvider = await wallet.getEthereumProvider();
+      const provider = new ethers.BrowserProvider(ethProvider);
       const signer = await provider.getSigner();
 
       const matching = new ethers.Contract(MATCHING_ADDRESS, CLARO_MATCHING_ABI, signer);

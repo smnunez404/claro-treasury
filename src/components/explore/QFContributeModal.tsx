@@ -2,7 +2,7 @@ import { useState } from "react";
 import { Loader2, CheckCircle2, XCircle, Zap, Users, TrendingUp } from "lucide-react";
 import { Dialog, DialogContent, DialogTitle } from "@/components/ui/dialog";
 import { AVAX_TO_USD } from "@/lib/constants";
-import type { QFProjectData, QFRound as QFRoundType, ContributeStep } from "@/types/claro";
+import type { QFProjectData, QFRoundFull2 as QFRoundType, ContributeStep } from "@/types/claro";
 
 interface Props {
   isOpen: boolean;

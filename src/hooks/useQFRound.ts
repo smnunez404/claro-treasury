@@ -5,7 +5,7 @@ import { useWallets } from "@privy-io/react-auth";
 import { CLARO_MATCHING_ABI } from "@/lib/abis";
 import { MATCHING_ADDRESS, RPC_URL, AVAX_TO_USD, CHAIN_ID } from "@/lib/constants";
 import { supabase } from "@/lib/supabaseClient";
-import type { QFRound as QFRoundType, QFProjectData, ContributeStep } from "@/types/claro";
+import type { QFRoundFull2, QFProjectData, ContributeStep } from "@/types/claro";
 
 export function useQFRound() {
   const { wallets } = useWallets();
@@ -22,7 +22,7 @@ export function useQFRound() {
       const provider = new ethers.JsonRpcProvider(RPC_URL);
       const matching = new ethers.Contract(MATCHING_ADDRESS, CLARO_MATCHING_ABI, provider);
 
-      let round: QFRoundType = {
+      let round: QFRoundFull2 = {
         projectIds: [],
         startTime: 0,
         endTime: 0,
@@ -128,7 +128,8 @@ export function useQFRound() {
       if (!wallet) throw new Error("No wallet connected");
 
       await wallet.switchChain(CHAIN_ID);
-      const provider = await wallet.getEthersProvider() as ethers.BrowserProvider;
+      const ethProvider = await wallet.getEthereumProvider();
+      const provider = new ethers.BrowserProvider(ethProvider);
       const signer = await provider.getSigner();
 
       const matching = new ethers.Contract(MATCHING_ADDRESS, CLARO_MATCHING_ABI, signer);

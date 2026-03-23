@@ -422,3 +422,29 @@ export interface ProtocolFullStats {
   qfMatchingPool: number;
   dailyVolume: { date: string; amount_usd: number; count: number }[];
 }
+
+// Sprint 12 — QF Round (full)
+export interface QFRoundFull2 {
+  projectIds: string[];
+  startTime: number;
+  endTime: number;
+  matchingPoolAvax: number;
+  matchingPoolUsd: number;
+  active: boolean;
+  timeRemainingSeconds: number;
+}
+
+export interface QFProjectData {
+  projectId: string;
+  projectName: string;
+  orgContract: string;
+  totalContributed: number;
+  totalContributedUsd: number;
+  uniqueDonors: number;
+  projectedMatchingAvax: number;
+  projectedMatchingUsd: number;
+}
+
+export type CreateRoundStep = "idle" | "confirming" | "success" | "error";
+
+export type ContributeStep = "idle" | "amount" | "confirming" | "success" | "error";
