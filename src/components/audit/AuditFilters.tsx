@@ -22,7 +22,7 @@ const ACTION_OPTIONS = [
 
 export default function AuditFilters({ filters, onChange }: Props) {
   const [orgInput, setOrgInput] = useState(filters.orgContract);
-  const hasFilters = filters.orgContract || filters.actionType || filters.dateFrom || filters.dateTo;
+  const hasFilters = filters.orgContract || filters.actionType !== "exclude_sync" || filters.dateFrom || filters.dateTo;
 
   // Debounce org input — wait 500ms after user stops typing
   useEffect(() => {
