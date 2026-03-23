@@ -1,12 +1,14 @@
 import { useState, useCallback } from "react";
 import { ethers } from "ethers";
 import { useWallets } from "@privy-io/react-auth";
+import { useQueryClient } from "@tanstack/react-query";
 import { AVAX_TO_USD, CHAIN_ID } from "@/lib/constants";
 import { YAIS_TREASURY_ABI } from "@/lib/abis";
 import type { DonationStep, DonationTarget } from "@/types/claro";
 
 export function useDonation() {
   const { wallets } = useWallets();
+  const queryClient = useQueryClient();
   const [step, setStep] = useState<DonationStep>("idle");
   const [txHash, setTxHash] = useState<string | null>(null);
   const [errorMessage, setErrorMessage] = useState<string | null>(null);
@@ -71,6 +73,13 @@ export function useDonation() {
         // Non-blocking — on-chain tx is confirmed regardless of logging
         console.error("log-donation Edge Function failed (non-blocking):", logError);
       }
+
+      // Invalidate relevant queries so cards/stats refresh
+      queryClient.invalidateQueries({ queryKey: ["explore-orgs"] });
+      queryClient.invalidateQueries({ queryKey: ["explore-orgs-meta"] });
+      queryClient.invalidateQueries({ queryKey: ["protocol-stats"] });
+      queryClient.invalidateQueries({ queryKey: ["org-profile"] });
+      queryClient.invalidateQueries({ queryKey: ["treasury"] });
 
       setStep("success");
     } catch (err: unknown) {
