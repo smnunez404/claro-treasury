@@ -178,9 +178,19 @@ export function useQFRound() {
       return true;
     } catch (err: unknown) {
       const message = err instanceof Error ? err.message : "Contribution failed";
-      const isRejected = message.toLowerCase().includes("rejected") ||
-                         message.toLowerCase().includes("denied");
-      setContributeError(isRejected ? "Transaction cancelled." : "Contribution failed. Try again.");
+      const lower = message.toLowerCase();
+      const isRejected = lower.includes("rejected") || lower.includes("denied");
+      const isInsufficientFunds =
+        lower.includes("insufficient funds") ||
+        lower.includes("insufficient balance") ||
+        lower.includes("exceeds balance");
+      setContributeError(
+        isRejected
+          ? "Transaction cancelled."
+          : isInsufficientFunds
+          ? "Insufficient AVAX. Please add funds and try again."
+          : "Contribution failed. Please try again."
+      );
       setContributeStep("error");
       return false;
     }
