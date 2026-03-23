@@ -174,6 +174,10 @@ export function useQFRound() {
       } catch { /* non-blocking */ }
 
       queryClient.invalidateQueries({ queryKey: ["qf-round"] });
+      queryClient.invalidateQueries({ queryKey: ["explore-orgs"] });
+      queryClient.invalidateQueries({ queryKey: ["protocol-stats"] });
+      queryClient.invalidateQueries({ queryKey: ["org-profile"] });
+      queryClient.invalidateQueries({ queryKey: ["treasury"] });
       setContributeStep("success");
       return true;
     } catch (err: unknown) {
