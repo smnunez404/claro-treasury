@@ -104,8 +104,56 @@ export default function DonationModal({ isOpen, onClose, orgContract, orgName }:
               <p className="text-xs text-destructive">Minimum donation is $0.01</p>
             )}
 
+            {/* Wallet balance display */}
+            {walletBalance !== null && isValidAmount && (
+              <div className="flex items-center justify-between">
+                <span className="text-xs text-muted-foreground flex items-center gap-1">
+                  <Wallet style={{ width: 12, height: 12 }} />
+                  Available: ${(walletBalance * AVAX_TO_USD).toFixed(2)} USD
+                </span>
+                {!hasEnoughBalance && (
+                  <span className="text-xs text-destructive font-medium flex items-center gap-1">
+                    <AlertTriangle style={{ width: 12, height: 12 }} />
+                    Insufficient balance
+                  </span>
+                )}
+              </div>
+            )}
+
+            {/* Insufficient balance panel */}
+            {!hasEnoughBalance && walletBalance !== null && isValidAmount && (
+              <div className="bg-amber-50 dark:bg-amber-950/30 border border-amber-200 dark:border-amber-800 rounded-lg p-3 space-y-2.5">
+                <div className="flex items-start gap-2">
+                  <AlertTriangle className="text-amber-600 shrink-0 mt-0.5" style={{ width: 16, height: 16 }} />
+                  <div>
+                    <p className="text-sm font-medium text-amber-800 dark:text-amber-200">Not enough funds</p>
+                    <p className="text-xs text-amber-700 dark:text-amber-300 mt-0.5">
+                      You need at least ${((amountAvax + 0.001) * AVAX_TO_USD).toFixed(2)} to complete this donation. You currently have ${(walletBalance * AVAX_TO_USD).toFixed(2)}.
+                    </p>
+                  </div>
+                </div>
+                <div className="space-y-1.5">
+                  <p className="text-xs font-medium text-amber-800 dark:text-amber-200">Add money to continue</p>
+                  <button
+                    type="button"
+                    onClick={() => setShowOnramper(true)}
+                    className="w-full flex items-center justify-between bg-background border border-amber-200 dark:border-amber-700 rounded-lg p-2.5 hover:bg-amber-50 dark:hover:bg-amber-950/50 transition-colors"
+                  >
+                    <div className="flex items-center gap-2">
+                      <CreditCard className="text-amber-600" style={{ width: 16, height: 16 }} />
+                      <div className="text-left">
+                        <p className="text-xs font-medium text-foreground">Add money</p>
+                        <p className="text-[11px] text-muted-foreground">Credit card, debit card, bank transfer</p>
+                      </div>
+                    </div>
+                    <ExternalLink className="text-muted-foreground" style={{ width: 12, height: 12 }} />
+                  </button>
+                </div>
+              </div>
+            )}
+
             <button
-              disabled={!isValidAmount}
+              disabled={!isValidAmount || !hasEnoughBalance}
               onClick={() =>
                 donate(numAmount, {
                   projectId: selectedProjectId,
@@ -118,6 +166,9 @@ export default function DonationModal({ isOpen, onClose, orgContract, orgName }:
             >
               Donate{amountUsd ? ` $${numAmount.toFixed(2)}` : ""}
             </button>
+            {!hasEnoughBalance && walletBalance !== null && isValidAmount && (
+              <p className="text-xs text-center text-muted-foreground">Add funds to continue</p>
+            )}
           </div>
         )}
 
