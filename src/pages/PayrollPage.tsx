@@ -62,7 +62,7 @@ export default function PayrollPage() {
         </button>
       </div>
 
-      <div className="px-4 pb-8 md:px-8 space-y-6 mt-4">
+      <div className="space-y-6 mt-4">
         <TreasuryBalanceBar
           balanceUsd={treasuryData?.balanceUsd ?? "$0.00"}
           balanceAvax={treasuryData?.balanceAvax ?? 0}

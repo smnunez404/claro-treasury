@@ -92,28 +92,26 @@ export default function OrganizationPage() {
   if (!org) return <p className="p-8 text-gray-500">Organization not found.</p>;
 
   return (
-    <div className="bg-gray-50 min-h-screen">
-      <div className="px-4 pt-6 pb-2 md:px-8">
-        <div className="flex items-start justify-between">
-          <div>
-            <h1 className="text-2xl font-semibold text-gray-900">My Organization</h1>
-            <p className="text-sm text-gray-500 mt-1">{org.name}</p>
-          </div>
-          <div className="mt-1">
-            {org.verified ? (
-              <span className="bg-green-50 border border-green-200 text-green-700 text-xs px-3 py-1 rounded-full flex items-center gap-1">
-                <CheckCircle className="w-3 h-3" /> Verified
-              </span>
-            ) : (
-              <span className="bg-amber-50 border border-amber-200 text-amber-700 text-xs px-3 py-1 rounded-full">
-                Pending Verification
-              </span>
-            )}
-          </div>
+    <div>
+      <div className="flex flex-col gap-3 sm:flex-row sm:items-start sm:justify-between">
+        <div>
+          <h1 className="text-2xl font-semibold text-foreground">My Organization</h1>
+          <p className="text-sm text-muted-foreground mt-1">{org.name}</p>
+        </div>
+        <div>
+          {org.verified ? (
+            <span className="bg-green-50 border border-green-200 text-green-700 text-xs px-3 py-1 rounded-full flex items-center gap-1 w-fit">
+              <CheckCircle className="w-3 h-3" /> Verified
+            </span>
+          ) : (
+            <span className="bg-amber-50 border border-amber-200 text-amber-700 text-xs px-3 py-1 rounded-full">
+              Pending Verification
+            </span>
+          )}
         </div>
       </div>
 
-      <div className="px-4 md:px-8 mt-6 pb-8">
+      <div className="mt-6">
         <Tabs defaultValue="profile">
           <TabsList>
             <TabsTrigger value="profile">Profile</TabsTrigger>
