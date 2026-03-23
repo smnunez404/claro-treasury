@@ -1,5 +1,5 @@
 import { useState } from "react";
-import { Loader2, CheckCircle2, XCircle, Zap, Users, TrendingUp } from "lucide-react";
+import { Loader2, CheckCircle2, XCircle, Zap, Users, TrendingUp, ChevronDown } from "lucide-react";
 import { Dialog, DialogContent, DialogTitle } from "@/components/ui/dialog";
 import { AVAX_TO_USD } from "@/lib/constants";
 import type { QFProjectData, QFRoundFull2 as QFRoundType, ContributeStep } from "@/types/claro";
@@ -7,7 +7,7 @@ import type { QFProjectData, QFRoundFull2 as QFRoundType, ContributeStep } from 
 interface Props {
   isOpen: boolean;
   onClose: () => void;
-  project: QFProjectData;
+  projects: QFProjectData[];
   round: QFRoundType;
   onContribute: (projectId: string, amountUsd: number) => Promise<boolean>;
   contributeStep: ContributeStep;
@@ -16,10 +16,14 @@ interface Props {
 }
 
 export default function QFContributeModal({
-  isOpen, onClose, project, round,
+  isOpen, onClose, projects, round,
   onContribute, contributeStep, contributeError, onReset,
 }: Props) {
+  const [selectedIdx, setSelectedIdx] = useState(0);
   const [amountUsd, setAmountUsd] = useState(1.0);
+
+  const project = projects[selectedIdx] ?? projects[0];
+  if (!project) return null;
 
   const step = contributeStep;
 
@@ -30,20 +34,53 @@ export default function QFContributeModal({
           <>
             <DialogTitle>Support in QF Round</DialogTitle>
 
-            {/* Project info */}
-            <div className="bg-gray-50 rounded-xl p-4 mb-4">
-              <p className="text-base font-semibold text-gray-900">{project.projectName}</p>
-              <div className="flex items-center gap-4 mt-2 text-xs text-gray-500">
-                <span className="flex items-center gap-1">
-                  <Users style={{ width: 10, height: 10 }} />
-                  {project.uniqueDonors} contributors
-                </span>
-                <span className="flex items-center gap-1">
-                  <TrendingUp style={{ width: 10, height: 10 }} />
-                  ~${project.projectedMatchingUsd.toFixed(2)} projected matching
-                </span>
+            {/* Project selector */}
+            {projects.length > 1 ? (
+              <div className="mb-4">
+                <p className="text-xs font-medium text-gray-500 mb-1.5">Select project</p>
+                <div className="space-y-1.5">
+                  {projects.map((p, i) => (
+                    <button
+                      key={p.projectId}
+                      onClick={() => setSelectedIdx(i)}
+                      className={`w-full text-left rounded-lg px-3 py-2.5 border transition-all ${
+                        i === selectedIdx
+                          ? "border-[#1A56DB] bg-blue-50 ring-1 ring-[#1A56DB]/20"
+                          : "border-gray-200 bg-gray-50 hover:border-gray-300"
+                      }`}
+                    >
+                      <p className={`text-sm font-medium ${i === selectedIdx ? "text-[#1A56DB]" : "text-gray-900"}`}>
+                        {p.projectName}
+                      </p>
+                      <div className="flex items-center gap-3 mt-0.5 text-xs text-gray-500">
+                        <span className="flex items-center gap-1">
+                          <Users style={{ width: 10, height: 10 }} />
+                          {p.uniqueDonors}
+                        </span>
+                        <span className="flex items-center gap-1">
+                          <TrendingUp style={{ width: 10, height: 10 }} />
+                          ~${p.projectedMatchingUsd.toFixed(2)}
+                        </span>
+                      </div>
+                    </button>
+                  ))}
+                </div>
               </div>
-            </div>
+            ) : (
+              <div className="bg-gray-50 rounded-xl p-4 mb-4">
+                <p className="text-base font-semibold text-gray-900">{project.projectName}</p>
+                <div className="flex items-center gap-4 mt-2 text-xs text-gray-500">
+                  <span className="flex items-center gap-1">
+                    <Users style={{ width: 10, height: 10 }} />
+                    {project.uniqueDonors} contributors
+                  </span>
+                  <span className="flex items-center gap-1">
+                    <TrendingUp style={{ width: 10, height: 10 }} />
+                    ~${project.projectedMatchingUsd.toFixed(2)} projected matching
+                  </span>
+                </div>
+              </div>
+            )}
 
             {/* QF explanation */}
             <div className="bg-blue-50 border border-blue-200 rounded-lg p-3 mb-4">
