@@ -1,3 +1,4 @@
+import { useState, useEffect } from "react";
 import { X } from "lucide-react";
 import type { AuditFiltersState } from "@/types/claro";
 
@@ -19,7 +20,25 @@ const ACTION_OPTIONS = [
 ];
 
 export default function AuditFilters({ filters, onChange }: Props) {
+  const [orgInput, setOrgInput] = useState(filters.orgContract);
   const hasFilters = filters.orgContract || filters.actionType || filters.dateFrom || filters.dateTo;
+
+  // Debounce org input — wait 500ms after user stops typing
+  useEffect(() => {
+    const timer = setTimeout(() => {
+      if (orgInput !== filters.orgContract) {
+        onChange({ ...filters, orgContract: orgInput });
+      }
+    }, 500);
+    return () => clearTimeout(timer);
+  }, [orgInput]);
+
+  // Sync external resets (e.g. "Clear" button)
+  useEffect(() => {
+    if (filters.orgContract !== orgInput && filters.orgContract === "") {
+      setOrgInput("");
+    }
+  }, [filters.orgContract]);
 
   const update = (patch: Partial<AuditFiltersState>) => {
     onChange({ ...filters, ...patch });
@@ -32,9 +51,9 @@ export default function AuditFilters({ filters, onChange }: Props) {
           <label className="text-xs font-medium text-gray-500 mb-1 block">Organization</label>
           <input
             type="text"
-            placeholder="Filter by contract address or name..."
-            value={filters.orgContract}
-            onChange={(e) => update({ orgContract: e.target.value })}
+            placeholder="Filter by name or contract address..."
+            value={orgInput}
+            onChange={(e) => setOrgInput(e.target.value)}
             className="w-64 text-sm border border-gray-300 rounded-md px-3 py-2"
           />
         </div>
@@ -74,7 +93,10 @@ export default function AuditFilters({ filters, onChange }: Props) {
 
         {hasFilters && (
           <button
-            onClick={() => onChange({ orgContract: "", actionType: "", dateFrom: "", dateTo: "" })}
+            onClick={() => {
+              setOrgInput("");
+              onChange({ orgContract: "", actionType: "", dateFrom: "", dateTo: "" });
+            }}
             className="text-xs text-gray-500 hover:text-gray-700 flex items-center gap-1 pb-2"
           >
             <X style={{ width: 12, height: 12 }} />
