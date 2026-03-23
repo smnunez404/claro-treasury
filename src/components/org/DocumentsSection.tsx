@@ -45,7 +45,7 @@ export default function DocumentsSection({ orgContract }: Props) {
             ? doc.doc_type.charAt(0).toUpperCase() + doc.doc_type.slice(1).replace(/_/g, " ")
             : null;
           return (
-            <div key={doc.id} className="flex items-center gap-3">
+            <div key={doc.id} className="flex items-center gap-2 sm:gap-3 min-w-0">
               <FileText className="text-gray-400 shrink-0" style={{ width: 16, height: 16 }} />
               {typeLabel && (
                 <span className="bg-gray-100 text-gray-500 text-xs px-2 py-0.5 rounded shrink-0">{typeLabel}</span>

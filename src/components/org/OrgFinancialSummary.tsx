@@ -28,7 +28,7 @@ export default function OrgFinancialSummary({ financials, isLoading }: Props) {
                 const value = format ? formatUsd(Number(raw)) : String(raw);
                 return (
                   <div key={key}>
-                    <p className="text-3xl font-bold text-white">{value}</p>
+                    <p className="text-2xl sm:text-3xl font-bold text-white break-all">{value}</p>
                     <div className="flex items-center gap-2 mt-1">
                       <Icon className={iconColor} style={{ width: 20, height: 20 }} />
                       <span className="text-gray-400 text-sm">{label}</span>

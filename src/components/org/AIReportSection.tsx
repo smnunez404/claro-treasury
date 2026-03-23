@@ -40,7 +40,7 @@ export default function AIReportSection({ report, isLoading, orgContract }: Prop
 
   return (
     <div className="bg-white border border-gray-200 rounded-xl p-6 shadow-sm">
-      <div className="flex items-center justify-between mb-4">
+      <div className="flex flex-col gap-1 sm:flex-row sm:items-center sm:justify-between mb-4">
         <div className="flex items-center gap-2">
           <Sparkles className="text-[#E3A008]" style={{ width: 20, height: 20 }} />
           <span className="text-sm font-semibold text-gray-900">AI Transparency Report</span>

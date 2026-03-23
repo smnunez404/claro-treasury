@@ -37,7 +37,7 @@ export default function TransactionRow({ tx, snowtraceUrl }: Props) {
   else if (tx.block_timestamp) subLabel = new Date(tx.block_timestamp).toLocaleDateString();
 
   return (
-    <div className="bg-white border border-gray-100 rounded-lg px-4 py-3 flex items-center gap-3 hover:bg-gray-50 transition-colors duration-150">
+    <div className="bg-white border border-gray-100 rounded-lg px-3 sm:px-4 py-3 flex items-center gap-2 sm:gap-3 hover:bg-gray-50 transition-colors duration-150">
       <div className={`w-8 h-8 rounded-full flex items-center justify-center ${bg}`}>
         <Icon className={iconColor} style={{ width: 16, height: 16 }} />
       </div>
