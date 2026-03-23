@@ -24,6 +24,7 @@ const orgOwnerItems = [
   { title: "Grants", url: "/grants", icon: Gift },
   { title: "Explore", url: "/explore", icon: Compass },
   { title: "Audit Log", url: "/audit", icon: ShieldCheck },
+  { title: "Stats", url: "/stats", icon: BarChart3 },
 ];
 
 const adminItems = [
