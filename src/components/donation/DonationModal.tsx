@@ -31,6 +31,20 @@ export default function DonationModal({ isOpen, onClose, orgContract, orgName }:
   const [amountUsd, setAmountUsd] = useState("");
   const [selectedProjectId, setSelectedProjectId] = useState<string | null>(null);
   const [selectedProjectName, setSelectedProjectName] = useState("General Treasury");
+  const [walletBalance, setWalletBalance] = useState<number | null>(null);
+  const [showOnramper, setShowOnramper] = useState(false);
+
+  const fetchBalance = (addr: string) => {
+    const provider = new ethers.JsonRpcProvider(RPC_URL);
+    provider.getBalance(addr).then(bal => {
+      setWalletBalance(Number(ethers.formatEther(bal)));
+    }).catch(() => setWalletBalance(null));
+  };
+
+  useEffect(() => {
+    if (!address || !isOpen) return;
+    fetchBalance(address);
+  }, [address, isOpen]);
 
   const handleClose = () => {
     reset();
@@ -48,6 +62,8 @@ export default function DonationModal({ isOpen, onClose, orgContract, orgName }:
   const numAmount = Number(amountUsd);
   const isValidAmount = !isNaN(numAmount) && numAmount >= 0.01;
   const isConnected = role !== "visitor" && !!address;
+  const amountAvax = numAmount / AVAX_TO_USD;
+  const hasEnoughBalance = walletBalance === null || walletBalance >= amountAvax + 0.001;
 
   return (
     <Dialog open={isOpen} onOpenChange={(open) => !open && handleClose()}>
