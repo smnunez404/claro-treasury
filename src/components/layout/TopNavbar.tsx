@@ -1,5 +1,5 @@
 import { Link } from "react-router-dom";
-import { ShieldCheck } from "lucide-react";
+import { ShieldCheck, BarChart3 } from "lucide-react";
 import { usePrivy } from "@privy-io/react-auth";
 import { useAuth } from "@/contexts/AuthContext";
 import { truncateAddress } from "@/lib/constants";
@@ -26,6 +26,10 @@ export default function TopNavbar() {
             <ShieldCheck style={{ width: 12, height: 12 }} />
             <span className="hidden sm:inline">Audit Log</span>
             <span className="sm:hidden">Audit</span>
+          </Link>
+          <Link to="/stats" className="text-xs sm:text-sm text-muted-foreground hover:text-foreground transition-colors flex items-center gap-1">
+            <BarChart3 style={{ width: 12, height: 12 }} />
+            Stats
           </Link>
 
           {!connected && (
