@@ -23,98 +23,110 @@ export function useQFRound() {
       const matching = new ethers.Contract(MATCHING_ADDRESS, CLARO_MATCHING_ABI, provider);
 
       let round: QFRoundFull2 = {
+        roundId: 0,
         projectIds: [],
         startTime: 0,
         endTime: 0,
         matchingPoolAvax: 0,
         matchingPoolUsd: 0,
         active: false,
+        distributed: false,
         timeRemainingSeconds: 0,
       };
 
+      // Get total rounds
+      const roundCount = await matching.roundCount();
+      const count = Number(roundCount);
+
+      if (count === 0) return { round, projects: [] };
+
+      // Get the latest round
+      const latestRoundId = count;
+
       try {
         const [rawRound, timeRemaining] = await Promise.all([
-          matching.getRound(),
-          matching.getTimeRemaining(),
+          matching.getRound(latestRoundId),
+          matching.getTimeRemaining(latestRoundId),
         ]);
 
         const matchingPoolAvax = Number(ethers.formatEther(rawRound.matchingPool ?? rawRound[3] ?? 0n));
         const now = Math.floor(Date.now() / 1000);
-        const projectIds = rawRound.projectIds ?? rawRound[0] ?? [];
         const endTime = Number(rawRound.endTime ?? rawRound[2] ?? 0);
-        const isActive = (rawRound.active ?? rawRound[4] ?? false) &&
-                         endTime > now &&
-                         projectIds.length > 0;
+        const isActive = (rawRound.active ?? rawRound[5] ?? false) &&
+                         !(rawRound.distributed ?? rawRound[4] ?? false) &&
+                         endTime > now;
+
+        const projectIds = await matching.getRoundProjects(latestRoundId);
 
         round = {
+          roundId: latestRoundId,
           projectIds: [...projectIds],
           startTime: Number(rawRound.startTime ?? rawRound[1] ?? 0),
           endTime,
           matchingPoolAvax,
           matchingPoolUsd: matchingPoolAvax * AVAX_TO_USD,
           active: isActive,
+          distributed: rawRound.distributed ?? rawRound[4] ?? false,
           timeRemainingSeconds: Number(timeRemaining),
         };
       } catch {
         return { round, projects: [] };
       }
 
+      // Fetch per-project data
       let projects: QFProjectData[] = [];
-      if (round.active && round.projectIds.length > 0) {
-        const projectDataPromises = round.projectIds.map(async (projectId: string) => {
-          try {
-            const [contributions, projectedMatching] = await Promise.all([
-              matching.getProjectContributions(projectId),
-              matching.calculateMatching(projectId).catch(() => 0n),
-            ]);
+      if (round.projectIds.length > 0) {
+        try {
+          const [matchingResult, ...statsResults] = await Promise.all([
+            matching.calculateMatching(latestRoundId).catch(() => [[], []]),
+            ...round.projectIds.map((pid: string) =>
+              matching.getProjectStats(latestRoundId, pid).catch(() => [0n, 0n])
+            ),
+          ]);
 
-            const totalAvax = Number(ethers.formatEther(contributions[0] ?? 0n));
-            const projectedAvax = Number(ethers.formatEther(projectedMatching ?? 0n));
+          const [matchingProjectIds, matchingAmounts] = matchingResult as [string[], bigint[]];
+          const matchingMap = new Map<string, bigint>();
+          (matchingProjectIds ?? []).forEach((pid: string, i: number) => {
+            matchingMap.set(pid, matchingAmounts?.[i] ?? 0n);
+          });
+
+          // Enrich with Supabase names
+          const { data: dbProjects } = await supabase
+            .from("claro_projects")
+            .select("onchain_project_id, name, org_contract")
+            .in("onchain_project_id", round.projectIds)
+            .eq("is_active", true);
+
+          const nameMap = new Map(
+            (dbProjects ?? []).map((p) => [p.onchain_project_id, { name: p.name, org: p.org_contract }])
+          );
+
+          projects = round.projectIds.map((pid: string, i: number) => {
+            const stats = statsResults[i] as [bigint, bigint];
+            const totalAvax = Number(ethers.formatEther(stats[0] ?? 0n));
+            const projectedAvax = Number(ethers.formatEther(matchingMap.get(pid) ?? 0n));
 
             return {
-              projectId,
-              projectName: projectId,
-              orgContract: "",
+              projectId: pid,
+              projectName: nameMap.get(pid)?.name ?? pid,
+              orgContract: nameMap.get(pid)?.org ?? "",
               totalContributed: totalAvax,
               totalContributedUsd: totalAvax * AVAX_TO_USD,
-              uniqueDonors: Number(contributions[1] ?? 0),
+              uniqueDonors: Number(stats[1] ?? 0),
               projectedMatchingAvax: projectedAvax,
               projectedMatchingUsd: projectedAvax * AVAX_TO_USD,
             } as QFProjectData;
-          } catch {
-            return null;
-          }
-        });
-
-        const rawProjects = await Promise.all(projectDataPromises);
-        const validProjects = rawProjects.filter(Boolean) as QFProjectData[];
-
-        if (validProjects.length > 0) {
-          try {
-            const { data: dbProjects } = await supabase
-              .from("claro_projects")
-              .select("onchain_project_id, name, org_contract")
-              .in("onchain_project_id", round.projectIds)
-              .eq("is_active", true);
-
-            const nameMap = new Map(
-              (dbProjects ?? []).map((p) => [p.onchain_project_id, { name: p.name, org: p.org_contract }])
-            );
-
-            projects = validProjects.map((p) => ({
-              ...p,
-              projectName: nameMap.get(p.projectId)?.name ?? p.projectId,
-              orgContract: nameMap.get(p.projectId)?.org ?? "",
-            }));
-          } catch {
-            projects = validProjects;
-          }
+          });
+        } catch {
+          // Failed to fetch project data
         }
       }
 
       return { round, projects };
     },
   });
+
+  const roundId = data?.round?.roundId ?? 0;
 
   async function contribute(projectId: string, amountUsd: number): Promise<boolean> {
     const amountAvax = amountUsd / AVAX_TO_USD;
@@ -133,10 +145,11 @@ export function useQFRound() {
       const signer = await provider.getSigner();
 
       const matching = new ethers.Contract(MATCHING_ADDRESS, CLARO_MATCHING_ABI, signer);
-      const tx = await matching.contribute(projectId, { value: amountWei });
+      const tx = await matching.contribute(roundId, projectId, { value: amountWei });
       const receipt = await tx.wait(1);
       const txHash = receipt?.hash ?? tx.hash;
 
+      // Log to Supabase (non-blocking)
       try {
         const signerAddress = await signer.getAddress();
         await fetch(
@@ -181,9 +194,11 @@ export function useQFRound() {
 
   return {
     round: data?.round ?? {
+      roundId: 0,
       projectIds: [], startTime: 0, endTime: 0,
       matchingPoolAvax: 0, matchingPoolUsd: 0,
-      active: false, timeRemainingSeconds: 0,
+      active: false, distributed: false,
+      timeRemainingSeconds: 0,
     },
     projects: data?.projects ?? [],
     isLoading,

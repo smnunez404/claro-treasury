@@ -9,22 +9,28 @@ export const CLARO_FACTORY_ABI = [
 ] as const;
 
 export const CLARO_MATCHING_ABI = [
-  "function currentRoundId() external view returns (uint256)",
-  "function getRound(uint256 roundId) external view returns (uint256 id, uint256 startTime, uint256 endTime, uint256 matchingPool, bool distributed, bool active)",
-  "function getProjectContributions(uint256 roundId, string projectId) external view returns (uint256 totalContributions, uint256 uniqueDonors)",
-  "function matchingPool() external view returns (uint256)",
+  // State
+  "function owner() external view returns (address)",
   "function roundCount() external view returns (uint256)",
+  // Round management
+  "function createRound(uint256 durationInSeconds, string[] memory projectIds) external",
+  "function fundMatchingPool(uint256 roundId) external payable",
+  // Contributions
+  "function contribute(uint256 roundId, string memory projectId) external payable",
+  // Views
+  "function getRound(uint256 roundId) external view returns (uint256 id, uint256 startTime, uint256 endTime, uint256 matchingPool, bool distributed, bool active)",
   "function getRoundProjects(uint256 roundId) external view returns (string[] memory)",
   "function getProjectStats(uint256 roundId, string memory projectId) external view returns (uint256 totalAmount, uint256 uniqueDonors)",
-  "function calculateMatching(uint256 roundId) external view returns (string[] memory projectIds, uint256[] memory amounts)",
   "function getTimeRemaining(uint256 roundId) external view returns (uint256)",
-  "function createRound(string[] memory projectIds, uint256 durationSeconds) external payable",
-  "function contribute(string memory projectId) external payable",
-  "function getRound() external view returns (string[] memory projectIds, uint256 startTime, uint256 endTime, uint256 matchingPool, bool active)",
-  "function getProjectContributions(string memory projectId) external view returns (uint256 total, uint256 uniqueDonors)",
-  "function getTimeRemaining() external view returns (uint256)",
-  "function calculateMatching(string memory projectId) external view returns (uint256)",
-  "function distributeMatching() external",
+  "function calculateMatching(uint256 roundId) external view returns (string[] memory projectIds, uint256[] memory matchingAmounts)",
+  "function distributeMatching(uint256 roundId) external",
+  "function transferOwnership(address newOwner) external",
+  "function emergencyWithdraw() external",
+  // Events
+  "event RoundCreated(uint256 indexed roundId, uint256 endTime, uint256 matchingPool)",
+  "event ContributionRecorded(uint256 indexed roundId, string projectId, address donor, uint256 amount)",
+  "event MatchingDistributed(uint256 indexed roundId, string projectId, uint256 matchingAmount)",
+  "event MatchingPoolFunded(uint256 indexed roundId, address funder, uint256 amount)",
 ] as const;
 
 export const YAIS_TREASURY_ABI = [

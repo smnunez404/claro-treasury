@@ -7,7 +7,7 @@ import { Dialog, DialogContent, DialogTitle, DialogDescription } from "@/compone
 import { Checkbox } from "@/components/ui/checkbox";
 import { Input } from "@/components/ui/input";
 import { CLARO_MATCHING_ABI } from "@/lib/abis";
-import { MATCHING_ADDRESS, CHAIN_ID, AVAX_TO_USD } from "@/lib/constants";
+import { MATCHING_ADDRESS, CHAIN_ID, AVAX_TO_USD, RPC_URL } from "@/lib/constants";
 import { supabase } from "@/lib/supabaseClient";
 import type { AdminOrgRow, CreateRoundStep } from "@/types/claro";
 
