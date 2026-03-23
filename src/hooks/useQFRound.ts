@@ -175,6 +175,7 @@ export function useQFRound() {
 
       queryClient.invalidateQueries({ queryKey: ["qf-round"] });
       queryClient.invalidateQueries({ queryKey: ["explore-orgs"] });
+      queryClient.invalidateQueries({ queryKey: ["explore-orgs-meta"] });
       queryClient.invalidateQueries({ queryKey: ["protocol-stats"] });
       queryClient.invalidateQueries({ queryKey: ["org-profile"] });
       queryClient.invalidateQueries({ queryKey: ["treasury"] });

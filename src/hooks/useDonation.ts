@@ -80,6 +80,7 @@ export function useDonation() {
       queryClient.invalidateQueries({ queryKey: ["protocol-stats"] });
       queryClient.invalidateQueries({ queryKey: ["org-profile"] });
       queryClient.invalidateQueries({ queryKey: ["treasury"] });
+      queryClient.invalidateQueries({ queryKey: ["qf-round"] });
 
       setStep("success");
     } catch (err: unknown) {
