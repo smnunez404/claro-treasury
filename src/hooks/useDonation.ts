@@ -8,6 +8,7 @@ import type { DonationStep, DonationTarget } from "@/types/claro";
 
 export function useDonation() {
   const { wallets } = useWallets();
+  const queryClient = useQueryClient();
   const [step, setStep] = useState<DonationStep>("idle");
   const [txHash, setTxHash] = useState<string | null>(null);
   const [errorMessage, setErrorMessage] = useState<string | null>(null);
