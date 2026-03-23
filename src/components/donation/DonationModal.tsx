@@ -66,7 +66,8 @@ export default function DonationModal({ isOpen, onClose, orgContract, orgName }:
   const hasEnoughBalance = walletBalance === null || walletBalance >= amountAvax + 0.001;
 
   return (
-    <Dialog open={isOpen} onOpenChange={(open) => !open && handleClose()}>
+    <>
+      <Dialog open={isOpen} onOpenChange={(open) => !open && handleClose()}>
       <DialogContent className="sm:max-w-md">
         <DialogHeader>
           <DialogTitle>Support {orgName}</DialogTitle>
