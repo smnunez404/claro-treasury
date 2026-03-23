@@ -1,3 +1,4 @@
+import { Link } from "react-router-dom";
 import { Award, ExternalLink, Target } from "lucide-react";
 import { formatUsd } from "@/lib/constants";
 import type { Project } from "@/types/claro";
