@@ -137,8 +137,7 @@ export default function QFContributeModal({
                 <div className="flex items-center justify-between mt-2">
                   <span className="text-xs text-muted-foreground flex items-center gap-1">
                     <Wallet style={{ width: 12, height: 12 }} />
-                    Your balance: {walletBalance.toFixed(4)} AVAX
-                    <span className="text-muted-foreground/60">(≈ ${(walletBalance * AVAX_TO_USD).toFixed(2)})</span>
+                    Available: ${(walletBalance * AVAX_TO_USD).toFixed(2)} USD
                   </span>
                   {!hasEnoughBalance && (
                     <span className="text-xs text-destructive font-medium flex items-center gap-1">
@@ -168,15 +167,15 @@ export default function QFContributeModal({
                   <div className="flex items-start gap-2">
                     <AlertTriangle className="text-amber-600 shrink-0 mt-0.5" style={{ width: 16, height: 16 }} />
                     <div>
-                      <p className="text-sm font-medium text-amber-800">Not enough AVAX</p>
+                      <p className="text-sm font-medium text-amber-800">Not enough funds</p>
                       <p className="text-xs text-amber-700 mt-0.5">
-                        You need at least {(amountAvax + 0.001).toFixed(4)} AVAX (contribution + gas). You have {walletBalance.toFixed(4)} AVAX.
+                        You need at least ${((amountAvax + 0.001) * AVAX_TO_USD).toFixed(2)} to complete this contribution. You currently have ${(walletBalance * AVAX_TO_USD).toFixed(2)}.
                       </p>
                     </div>
                   </div>
 
                   <div className="space-y-1.5">
-                    <p className="text-xs font-medium text-amber-800">Get AVAX:</p>
+                    <p className="text-xs font-medium text-amber-800">Add money to continue</p>
                     <button
                       onClick={() => setShowOnramper(true)}
                       className="w-full flex items-center justify-between bg-white border border-amber-200 rounded-lg p-2.5 hover:bg-amber-50 transition-colors"
@@ -184,27 +183,12 @@ export default function QFContributeModal({
                       <div className="flex items-center gap-2">
                         <CreditCard className="text-amber-600" style={{ width: 16, height: 16 }} />
                         <div className="text-left">
-                          <p className="text-xs font-medium text-foreground">Buy with card</p>
-                          <p className="text-[11px] text-muted-foreground">Credit card, bank transfer</p>
+                          <p className="text-xs font-medium text-foreground">Add money</p>
+                          <p className="text-[11px] text-muted-foreground">Credit card, debit card, bank transfer</p>
                         </div>
                       </div>
                       <ExternalLink className="text-muted-foreground" style={{ width: 12, height: 12 }} />
                     </button>
-                    <a
-                      href="https://faucet.avax.network/"
-                      target="_blank"
-                      rel="noopener noreferrer"
-                      className="w-full flex items-center justify-between bg-white border border-amber-200 rounded-lg p-2.5 hover:bg-amber-50 transition-colors"
-                    >
-                      <div className="flex items-center gap-2">
-                        <Zap className="text-amber-600" style={{ width: 16, height: 16 }} />
-                        <div className="text-left">
-                          <p className="text-xs font-medium text-foreground">Fuji Faucet</p>
-                          <p className="text-[11px] text-muted-foreground">Free testnet AVAX</p>
-                        </div>
-                      </div>
-                      <ExternalLink className="text-muted-foreground" style={{ width: 12, height: 12 }} />
-                    </a>
                   </div>
                 </div>
               )}

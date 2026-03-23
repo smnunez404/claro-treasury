@@ -186,10 +186,10 @@ export function useQFRound() {
         lower.includes("exceeds balance");
       setContributeError(
         isRejected
-          ? "Transaction cancelled."
+          ? "Payment cancelled."
           : isInsufficientFunds
-          ? "Insufficient AVAX. Please add funds and try again."
-          : "Contribution failed. Please try again."
+          ? "You don't have enough funds. Tap 'Add money' to continue."
+          : "Something went wrong. Please try again."
       );
       setContributeStep("error");
       return false;
