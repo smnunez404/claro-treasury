@@ -85,7 +85,7 @@ export default function ExplorePage() {
     resetContribute,
   } = useQFRound();
 
-  const [contributeTarget, setContributeTarget] = useState<QFProjectData | null>(null);
+  const [contributeTargets, setContributeTargets] = useState<QFProjectData[] | null>(null);
 
   // Merge org data
   const metaData = metaQuery.data;
@@ -238,7 +238,7 @@ export default function ExplorePage() {
                           QF Round Active
                         </span>
                         <button
-                          onClick={() => setContributeTarget(orgQfProjects[0])}
+                          onClick={() => setContributeTargets(orgQfProjects)}
                           className="bg-amber-500 text-white text-xs px-3 py-1 rounded-md hover:bg-amber-600 transition-colors"
                         >
                           Contribute
@@ -254,11 +254,11 @@ export default function ExplorePage() {
       </section>
 
       {/* QF Contribute Modal */}
-      {contributeTarget && (
+      {contributeTargets && contributeTargets.length > 0 && (
         <QFContributeModal
-          isOpen={contributeTarget !== null}
-          onClose={() => { setContributeTarget(null); resetContribute(); }}
-          project={contributeTarget}
+          isOpen
+          onClose={() => { setContributeTargets(null); resetContribute(); }}
+          projects={contributeTargets}
           round={qfRound}
           onContribute={contribute}
           contributeStep={contributeStep}
