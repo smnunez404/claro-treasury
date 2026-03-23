@@ -170,9 +170,9 @@ export default function ExplorePage() {
       {/* SECTION 4 — ORGANIZATIONS GRID */}
       <section id="organizations" className="bg-gray-50 py-12">
         <div className="max-w-7xl mx-auto px-4">
-          <div className="flex items-center justify-between mb-8">
+          <div className="flex flex-col gap-1 sm:flex-row sm:items-center sm:justify-between mb-8">
             <h2 className="text-xl font-semibold text-gray-900">Registered Organizations</h2>
-            <span className="bg-gray-100 text-gray-600 text-sm px-3 py-1 rounded-full">
+            <span className="bg-gray-100 text-gray-600 text-sm px-3 py-1 rounded-full w-fit">
               {statsQuery.data?.totalOrgs ?? 0} total
             </span>
           </div>
