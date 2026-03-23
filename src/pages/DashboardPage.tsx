@@ -25,12 +25,12 @@ export default function DashboardPage() {
   if (isTreasuryLoading) return <DashboardSkeleton />;
 
   return (
-    <div className="min-h-screen">
+    <div className="space-y-6">
       {/* Header */}
-      <div className="px-4 pt-6 pb-4 md:px-8 flex flex-col md:flex-row md:items-center md:justify-between gap-4">
+      <div className="flex flex-col gap-3">
         <div>
           <h1 className="text-2xl font-semibold text-foreground">Dashboard</h1>
-          <p className="text-sm text-muted-foreground">Treasury overview for your organization</p>
+          <p className="text-sm text-muted-foreground mt-0.5">Treasury overview for your organization</p>
         </div>
         <QuickActions
           onBuy={() => { setOnramperMode("buy"); setOnramperOpen(true); }}
@@ -40,31 +40,29 @@ export default function DashboardPage() {
       </div>
 
       {/* Content */}
-      <div className="px-4 pb-8 md:px-8 space-y-6">
-        <TreasuryKPIs
-          treasuryData={treasuryData}
-          financials={financials}
-          isLoading={isTreasuryLoading}
-          isError={isTreasuryError}
-          onRetry={() => refetchTreasury()}
-        />
+      <TreasuryKPIs
+        treasuryData={treasuryData}
+        financials={financials}
+        isLoading={isTreasuryLoading}
+        isError={isTreasuryError}
+        onRetry={() => refetchTreasury()}
+      />
 
-        {qfRound?.isActive && <DashboardQFCard qfRound={qfRound} />}
+      {qfRound?.isActive && <DashboardQFCard qfRound={qfRound} />}
 
-        <div className="grid lg:grid-cols-3 gap-6">
-          <div className="lg:col-span-2 space-y-6">
-            <RecentActivity
-              transactions={recentActivity}
-              isLoading={isActivityLoading}
-              isError={isActivityError}
-              onRetry={() => {}}
-              snowtraceUrl={SNOWTRACE_URL}
-            />
-            <GrantsList grants={grants} isLoading={isGrantsLoading} />
-          </div>
-          <div>
-            <EmployeesList employees={employees} isLoading={isEmployeesLoading} />
-          </div>
+      <div className="grid lg:grid-cols-3 gap-6">
+        <div className="lg:col-span-2 space-y-6">
+          <RecentActivity
+            transactions={recentActivity}
+            isLoading={isActivityLoading}
+            isError={isActivityError}
+            onRetry={() => {}}
+            snowtraceUrl={SNOWTRACE_URL}
+          />
+          <GrantsList grants={grants} isLoading={isGrantsLoading} />
+        </div>
+        <div>
+          <EmployeesList employees={employees} isLoading={isEmployeesLoading} />
         </div>
       </div>
 

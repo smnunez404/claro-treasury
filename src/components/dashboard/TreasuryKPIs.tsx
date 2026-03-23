@@ -67,17 +67,17 @@ export default function TreasuryKPIs({ treasuryData, financials, isLoading, isEr
   ];
 
   return (
-    <div className="grid grid-cols-2 lg:grid-cols-4 gap-4">
+    <div className="grid grid-cols-2 lg:grid-cols-4 gap-3 sm:gap-4">
       {cards.map((c) => (
-        <div key={c.label} className="bg-card border border-border rounded-xl p-5 shadow-sm">
-          <div className="flex items-center justify-between">
-            <span className="text-sm font-medium text-muted-foreground">{c.label}</span>
-            <div className={`w-9 h-9 rounded-lg flex items-center justify-center ${c.iconBg}`}>
-              <c.icon className={c.iconColor} style={{ width: 18, height: 18 }} />
+        <div key={c.label} className="bg-card border border-border rounded-xl p-3 sm:p-5 shadow-sm">
+          <div className="flex items-center justify-between gap-1">
+            <span className="text-xs sm:text-sm font-medium text-muted-foreground leading-tight">{c.label}</span>
+            <div className={`w-8 h-8 sm:w-9 sm:h-9 rounded-lg flex items-center justify-center shrink-0 ${c.iconBg}`}>
+              <c.icon className={c.iconColor} style={{ width: 16, height: 16 }} />
             </div>
           </div>
-          <p className="text-2xl font-bold text-foreground mt-3">{c.value}</p>
-          <p className="text-xs text-muted-foreground mt-1">{c.sub}</p>
+          <p className="text-lg sm:text-2xl font-bold text-foreground mt-2 sm:mt-3 truncate">{c.value}</p>
+          <p className="text-[11px] sm:text-xs text-muted-foreground mt-0.5 sm:mt-1 truncate">{c.sub}</p>
         </div>
       ))}
     </div>
