@@ -85,7 +85,7 @@ export default function ExplorePage() {
     resetContribute,
   } = useQFRound();
 
-  const [contributeTarget, setContributeTarget] = useState<QFProjectData | null>(null);
+  const [contributeTargets, setContributeTargets] = useState<QFProjectData[] | null>(null);
 
   // Merge org data
   const metaData = metaQuery.data;
