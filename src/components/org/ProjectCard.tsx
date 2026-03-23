@@ -20,10 +20,10 @@ export default function ProjectCard({ project }: Props) {
     : null;
 
   return (
-    <div className="bg-white border border-gray-200 rounded-xl p-5 hover:shadow-md transition-shadow duration-200">
-      <div className="flex items-start justify-between gap-2">
+    <div className="bg-white border border-gray-200 rounded-xl p-4 sm:p-5 hover:shadow-md transition-shadow duration-200">
+      <div className="flex flex-col gap-2">
         <p className="text-sm font-semibold text-gray-900">{project.name}</p>
-        <div className="flex items-center gap-1.5 shrink-0">
+        <div className="flex flex-wrap items-center gap-1.5">
           <span className={`border ${s.bg} ${s.text} text-xs px-2 py-0.5 rounded-full whitespace-nowrap`}>
             {s.label}
           </span>
@@ -53,7 +53,7 @@ export default function ProjectCard({ project }: Props) {
         <p className="mt-2 text-sm text-gray-600 line-clamp-2">{project.description}</p>
       )}
 
-      <div className="mt-4 flex items-center justify-between">
+      <div className="mt-4 flex flex-wrap items-center gap-2 justify-between">
         <div className="flex items-center gap-2">
           {category && (
             <span className="bg-gray-100 text-gray-500 text-xs px-2 py-0.5 rounded">{category}</span>
