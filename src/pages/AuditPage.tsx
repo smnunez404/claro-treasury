@@ -56,7 +56,9 @@ export default function AuditPage() {
           query = query.ilike("org_contract", `%${filters.orgContract}%`);
         }
       }
-      if (filters.actionType) {
+      if (filters.actionType === "exclude_sync") {
+        query = query.neq("action", "org_synced_from_blockchain");
+      } else if (filters.actionType) {
         query = query.eq("action", filters.actionType);
       }
       if (filters.dateFrom) {

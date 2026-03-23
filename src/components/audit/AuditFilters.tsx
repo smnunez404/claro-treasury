@@ -8,7 +8,8 @@ interface Props {
 }
 
 const ACTION_OPTIONS = [
-  { value: "", label: "All actions" },
+  { value: "exclude_sync", label: "All meaningful actions" },
+  { value: "", label: "All actions (including syncs)" },
   { value: "grant_deposit", label: "Donation Received" },
   { value: "grant_certified", label: "Impact Certified" },
   { value: "payroll_executed", label: "Payroll Payment" },
