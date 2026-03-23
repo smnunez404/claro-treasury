@@ -14,6 +14,7 @@ import {
   MapPin,
   LogOut,
   ShieldCheck,
+  BarChart3,
 } from "lucide-react";
 
 const orgOwnerItems = [
