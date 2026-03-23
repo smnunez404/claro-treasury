@@ -1,10 +1,11 @@
 import { useState } from "react";
-import { RefreshCw, ShieldCheck } from "lucide-react";
+import { RefreshCw, ShieldCheck, Zap } from "lucide-react";
 import { useAdmin } from "@/hooks/useAdmin";
 import AdminStatsBar from "@/components/admin/AdminStatsBar";
 import OrgAdminTable from "@/components/admin/OrgAdminTable";
 import VerifyOrgModal from "@/components/admin/VerifyOrgModal";
 import AdminSkeleton from "@/components/admin/AdminSkeleton";
+import CreateQFRoundModal from "@/components/admin/CreateQFRoundModal";
 import type { AdminOrgRow } from "@/types/claro";
 
 export default function AdminPage() {
@@ -23,6 +24,7 @@ export default function AdminPage() {
   } = useAdmin();
 
   const [verifyTarget, setVerifyTarget] = useState<AdminOrgRow | null>(null);
+  const [createRoundOpen, setCreateRoundOpen] = useState(false);
 
   if (isOrgsLoading) return <AdminSkeleton />;
 
@@ -36,6 +38,14 @@ export default function AdminPage() {
         </div>
 
         <div className="flex items-center gap-3">
+          <button
+            onClick={() => setCreateRoundOpen(true)}
+            className="bg-[#1A56DB] text-white text-sm px-4 py-2 rounded-md flex items-center gap-2 hover:bg-[#1A56DB]/90 active:scale-[0.97] transition-all"
+          >
+            <Zap style={{ width: 14, height: 14 }} />
+            Create QF Round
+          </button>
+
           <button
             onClick={syncOrganizations}
             disabled={isSyncing}
@@ -78,6 +88,12 @@ export default function AdminPage() {
           setVerifyTarget(null);
           resetVerify();
         }}
+      />
+
+      <CreateQFRoundModal
+        isOpen={createRoundOpen}
+        onClose={() => setCreateRoundOpen(false)}
+        orgs={orgs ?? []}
       />
     </div>
   );

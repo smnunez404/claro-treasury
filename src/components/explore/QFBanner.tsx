@@ -1,13 +1,24 @@
-import { Clock } from "lucide-react";
-import type { QFRound } from "@/types/claro";
+import { Clock, Zap } from "lucide-react";
+import type { QFRoundFull2 } from "@/types/claro";
 
-interface Props {
-  round: QFRound | null | undefined;
-  isLoading: boolean;
+function formatTimeRemaining(seconds: number): string {
+  if (seconds <= 0) return "Round ended";
+  const d = Math.floor(seconds / 86400);
+  const h = Math.floor((seconds % 86400) / 3600);
+  const m = Math.floor((seconds % 3600) / 60);
+  if (d > 0) return `${d}d ${h}h remaining`;
+  if (h > 0) return `${h}h ${m}m remaining`;
+  return `${m}m remaining`;
 }
 
-export default function QFBanner({ round, isLoading }: Props) {
-  if (isLoading || !round?.isActive) return null;
+interface Props {
+  round: QFRoundFull2;
+  isLoading: boolean;
+  onScrollToOrgs?: () => void;
+}
+
+export default function QFBanner({ round, isLoading, onScrollToOrgs }: Props) {
+  if (isLoading || !round.active) return null;
 
   return (
     <section className="max-w-7xl mx-auto px-4 -mt-6 mb-2 relative z-10">
@@ -23,12 +34,26 @@ export default function QFBanner({ round, isLoading }: Props) {
           </span>
         </div>
         <div className="flex flex-col md:items-end gap-1">
-          <span className="text-white text-3xl font-bold">{round.matchingPoolUsd}</span>
+          <span className="text-white text-3xl font-bold">
+            ${round.matchingPoolUsd.toFixed(2)}
+          </span>
           <span className="text-blue-100 text-sm">Matching Pool</span>
           <span className="text-blue-100 text-sm flex items-center gap-1">
             <Clock style={{ width: 12, height: 12 }} />
-            {round.hoursRemaining}h remaining
+            {formatTimeRemaining(round.timeRemainingSeconds)}
           </span>
+          <span className="text-blue-100 text-xs mt-1">
+            {round.projectIds.length} projects participating
+          </span>
+          {onScrollToOrgs && (
+            <button
+              onClick={onScrollToOrgs}
+              className="mt-2 bg-white/20 text-white text-xs px-4 py-1.5 rounded-md hover:bg-white/30 transition-colors flex items-center gap-1"
+            >
+              <Zap style={{ width: 10, height: 10 }} />
+              Contribute to QF Round
+            </button>
+          )}
         </div>
       </div>
     </section>
