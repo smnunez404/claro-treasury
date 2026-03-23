@@ -59,7 +59,7 @@ export default function MilestonesSection({ projects, isLoading: projectsLoading
                 <div className="flex-1 min-w-0">
                   <p className="text-sm font-medium text-gray-900">{ms.title}</p>
                   {ms.description && <p className="text-xs text-gray-500 mt-0.5 line-clamp-1">{ms.description}</p>}
-                  <div className="flex gap-3 mt-1">
+                  <div className="flex flex-wrap gap-3 mt-1">
                     {ms.target_date && (
                       <span className="text-xs text-gray-400 flex items-center gap-1">
                         <Calendar style={{ width: 10, height: 10 }} />

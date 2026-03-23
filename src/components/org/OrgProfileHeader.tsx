@@ -79,41 +79,42 @@ export default function OrgProfileHeader({ org }: Props) {
           )}
 
           {/* Actions */}
-          <div className="mt-4 flex items-center gap-3 flex-wrap">
-            {org.website && (
-              <a href={org.website} target="_blank" rel="noopener noreferrer" className="border border-gray-300 text-gray-700 hover:bg-gray-50 rounded-md px-3 py-1.5 text-xs font-medium flex items-center gap-1 active:scale-[0.97] transition-all">
-                <ExternalLink style={{ width: 12, height: 12 }} /> Website
-              </a>
-            )}
-            {org.social_twitter && (
-              <a href={`https://twitter.com/${org.social_twitter}`} target="_blank" rel="noopener noreferrer" className="border border-gray-300 text-gray-700 hover:bg-gray-50 rounded-md px-3 py-1.5 text-xs font-medium active:scale-[0.97] transition-all">
-                𝕏
-              </a>
-            )}
-            {org.social_instagram && (
-              <a href={`https://instagram.com/${org.social_instagram}`} target="_blank" rel="noopener noreferrer" className="border border-gray-300 text-gray-700 hover:bg-gray-50 rounded-md px-3 py-1.5 text-xs font-medium active:scale-[0.97] transition-all">
-                Instagram
-              </a>
-            )}
+          <div className="mt-4 flex flex-col gap-3 sm:flex-row sm:items-center sm:flex-wrap">
+            <div className="flex items-center gap-2 flex-wrap">
+              {org.website && (
+                <a href={org.website} target="_blank" rel="noopener noreferrer" className="border border-gray-300 text-gray-700 hover:bg-gray-50 rounded-md px-3 py-1.5 text-xs font-medium flex items-center gap-1 active:scale-[0.97] transition-all">
+                  <ExternalLink style={{ width: 12, height: 12 }} /> Website
+                </a>
+              )}
+              {org.social_twitter && (
+                <a href={`https://twitter.com/${org.social_twitter}`} target="_blank" rel="noopener noreferrer" className="border border-gray-300 text-gray-700 hover:bg-gray-50 rounded-md px-3 py-1.5 text-xs font-medium active:scale-[0.97] transition-all">
+                  𝕏
+                </a>
+              )}
+              {org.social_instagram && (
+                <a href={`https://instagram.com/${org.social_instagram}`} target="_blank" rel="noopener noreferrer" className="border border-gray-300 text-gray-700 hover:bg-gray-50 rounded-md px-3 py-1.5 text-xs font-medium active:scale-[0.97] transition-all">
+                  Instagram
+                </a>
+              )}
+            </div>
 
-            <span className="flex-1" />
-
-            <a
-              href={`${SNOWTRACE_URL}/address/${org.contract_address}`}
-              target="_blank"
-              rel="noopener noreferrer"
-              className="text-xs text-gray-500 flex items-center gap-1 hover:text-gray-700 transition-colors"
-            >
-              View on Snowtrace <ExternalLink style={{ width: 12, height: 12 }} />
-            </a>
-
-            <button
-              onClick={copyAddress}
-              className="bg-gray-100 text-gray-600 text-xs font-mono px-3 py-1 rounded-full hover:bg-gray-200 active:scale-[0.97] transition-all flex items-center gap-1"
-            >
-              {truncateAddress(org.contract_address)}
-              <Copy style={{ width: 10, height: 10 }} />
-            </button>
+            <div className="flex items-center gap-2 flex-wrap sm:ml-auto">
+              <a
+                href={`${SNOWTRACE_URL}/address/${org.contract_address}`}
+                target="_blank"
+                rel="noopener noreferrer"
+                className="text-xs text-gray-500 flex items-center gap-1 hover:text-gray-700 transition-colors"
+              >
+                View on Snowtrace <ExternalLink style={{ width: 12, height: 12 }} />
+              </a>
+              <button
+                onClick={copyAddress}
+                className="bg-gray-100 text-gray-600 text-xs font-mono px-3 py-1 rounded-full hover:bg-gray-200 active:scale-[0.97] transition-all flex items-center gap-1"
+              >
+                {truncateAddress(org.contract_address)}
+                <Copy style={{ width: 10, height: 10 }} />
+              </button>
+            </div>
           </div>
         </div>
       </div>
