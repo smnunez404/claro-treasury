@@ -254,11 +254,11 @@ export default function ExplorePage() {
       </section>
 
       {/* QF Contribute Modal */}
-      {contributeTarget && (
+      {contributeTargets && contributeTargets.length > 0 && (
         <QFContributeModal
-          isOpen={contributeTarget !== null}
-          onClose={() => { setContributeTarget(null); resetContribute(); }}
-          project={contributeTarget}
+          isOpen
+          onClose={() => { setContributeTargets(null); resetContribute(); }}
+          projects={contributeTargets}
           round={qfRound}
           onContribute={contribute}
           contributeStep={contributeStep}
