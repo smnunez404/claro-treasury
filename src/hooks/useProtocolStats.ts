@@ -31,12 +31,12 @@ export function useProtocolStats() {
             .select("id", { count: "exact", head: true }),
           supabase
             .from("claro_transactions")
-            .select("block_timestamp, amount_usd, tx_type")
+            .select("block_timestamp, created_at, amount_usd, tx_type")
             .gte(
-              "block_timestamp",
+              "created_at",
               new Date(Date.now() - 30 * 24 * 60 * 60 * 1000).toISOString()
             )
-            .order("block_timestamp", { ascending: true }),
+            .order("created_at", { ascending: true }),
         ]);
 
       const orgs = orgsRes.data ?? [];
