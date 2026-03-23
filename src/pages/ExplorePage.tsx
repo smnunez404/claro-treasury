@@ -154,9 +154,12 @@ export default function ExplorePage() {
               Register Your Organization
             </Link>
           </div>
-          <div className="mt-8 flex items-center justify-center gap-2 text-gray-500 text-xs text-center px-4">
-            <Shield className="shrink-0" style={{ width: 14, height: 14 }} />
-            <span>Secured by Avalanche blockchain · All transactions publicly verifiable</span>
+          <div className="mt-8 flex flex-col items-center gap-1 text-gray-500 text-xs text-center px-4">
+            <div className="flex items-center gap-1.5">
+              <Shield className="shrink-0" style={{ width: 14, height: 14 }} />
+              <span>Secured by Avalanche blockchain</span>
+            </div>
+            <span>All transactions publicly verifiable</span>
           </div>
         </div>
       </section>
