@@ -1,5 +1,5 @@
 import { Link } from "react-router-dom";
-import { ShieldCheck } from "lucide-react";
+import { ShieldCheck, BarChart3 } from "lucide-react";
 import { usePrivy } from "@privy-io/react-auth";
 import { useAuth } from "@/contexts/AuthContext";
 import { truncateAddress } from "@/lib/constants";
