@@ -51,3 +51,9 @@
     font-family: 'Inter', system-ui, -apple-system, sans-serif;
   }
 }
+
+@layer utilities {
+  .overflow-wrap-anywhere {
+    overflow-wrap: anywhere;
+  }
+}
