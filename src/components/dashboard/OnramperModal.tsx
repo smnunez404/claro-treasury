@@ -32,17 +32,17 @@ export default function OnramperModal({ isOpen, onClose, mode, walletAddress }: 
       <DialogContent className="max-w-md">
         <DialogHeader>
           <DialogTitle>
-            {mode === "buy" ? "Add Funds to Your Treasury" : "Withdraw to Bank Account"}
+            {mode === "buy" ? "Add Funds" : "Withdraw to Bank Account"}
           </DialogTitle>
           <DialogDescription>
             {mode === "buy"
-              ? "Buy AVAX with a credit card, bank transfer, or local payment method."
-              : "Convert AVAX to your local currency and withdraw to your bank account."}
+              ? "Add money using a credit card, debit card, bank transfer, or local payment method."
+              : "Convert your balance to local currency and withdraw to your bank account."}
           </DialogDescription>
         </DialogHeader>
 
         {mode === "buy" && (
-          <p className="text-xs text-muted-foreground">Funds go directly to your treasury contract.</p>
+          <p className="text-xs text-muted-foreground">Funds go directly to your organization's account.</p>
         )}
 
         <iframe
