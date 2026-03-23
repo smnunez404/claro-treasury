@@ -41,7 +41,20 @@ export default function AuditPage() {
         .range(page * 50, (page + 1) * 50 - 1);
 
       if (filters.orgContract) {
-        query = query.ilike("org_contract", `%${filters.orgContract}%`);
+        // Find matching contract addresses by name from orgMap
+        const term = filters.orgContract.toLowerCase();
+        const matchingContracts: string[] = [];
+        orgMap?.forEach((org, addr) => {
+          if (org.name.toLowerCase().includes(term)) {
+            matchingContracts.push(addr);
+          }
+        });
+        // Also match by contract address directly
+        if (matchingContracts.length > 0) {
+          query = query.in("org_contract", matchingContracts);
+        } else {
+          query = query.ilike("org_contract", `%${filters.orgContract}%`);
+        }
       }
       if (filters.actionType) {
         query = query.eq("action", filters.actionType);
