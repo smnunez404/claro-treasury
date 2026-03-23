@@ -64,9 +64,12 @@ export default function CreateQFRoundModal({ isOpen, onClose, orgs }: Props) {
     );
   }
 
+  const [confirmSubStep, setConfirmSubStep] = useState<1 | 2>(1);
+
   async function handleCreate() {
     if (selectedProjectIds.length === 0) return;
     setStep("confirming");
+    setConfirmSubStep(1);
     setError(null);
 
     try {
@@ -79,15 +82,22 @@ export default function CreateQFRoundModal({ isOpen, onClose, orgs }: Props) {
       const signer = await provider.getSigner();
 
       const matching = new ethers.Contract(MATCHING_ADDRESS, CLARO_MATCHING_ABI, signer);
-      const durationSeconds = BigInt(durationHours * 3600);
-      const matchingWei = ethers.parseEther(matchingPoolAvax.toFixed(6));
 
-      const tx = await matching.createRound(
-        selectedProjectIds,
-        durationSeconds,
-        { value: matchingWei }
-      );
-      await tx.wait(1);
+      // Step 1: createRound (no value)
+      const durationSeconds = BigInt(durationHours * 3600);
+      const tx1 = await matching.createRound(durationSeconds, selectedProjectIds);
+      await tx1.wait(1);
+
+      // Get the new roundId
+      const readProvider = new ethers.JsonRpcProvider(RPC_URL);
+      const readMatching = new ethers.Contract(MATCHING_ADDRESS, CLARO_MATCHING_ABI, readProvider);
+      const newRoundId = await readMatching.roundCount();
+
+      // Step 2: fundMatchingPool (send AVAX)
+      setConfirmSubStep(2);
+      const matchingWei = ethers.parseEther(matchingPoolAvax.toFixed(6));
+      const tx2 = await matching.fundMatchingPool(newRoundId, { value: matchingWei });
+      await tx2.wait(1);
 
       queryClient.invalidateQueries({ queryKey: ["qf-round"] });
       setStep("success");
