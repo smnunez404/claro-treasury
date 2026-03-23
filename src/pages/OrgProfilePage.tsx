@@ -1,7 +1,7 @@
 import { useMemo, useState } from "react";
 import { useParams, Navigate, Link } from "react-router-dom";
 import { useQuery, useQueryClient } from "@tanstack/react-query";
-import { SearchX, Heart } from "lucide-react";
+import { SearchX } from "lucide-react";
 import { supabase } from "@/integrations/supabase/client";
 import type {
   OrgFull,
@@ -159,15 +159,7 @@ export default function OrgProfilePage() {
 
   return (
     <div className="bg-gray-50 min-h-screen">
-      <div className="max-w-7xl mx-auto px-4 pt-4 flex justify-end">
-        <button
-          onClick={() => setDonateOpen(true)}
-          className="bg-[#1A56DB] text-white rounded-md px-4 py-2 text-sm font-medium flex items-center gap-2 hover:bg-[#1A56DB]/90 active:scale-[0.97] transition-all"
-        >
-          <Heart style={{ width: 14, height: 14 }} /> Donate
-        </button>
-      </div>
-      <OrgProfileHeader org={org} financials={financialsQuery.data} />
+      <OrgProfileHeader org={org} financials={financialsQuery.data} onDonate={() => setDonateOpen(true)} />
       <OrgFinancialSummary financials={financialsQuery.data} isLoading={financialsQuery.isLoading} />
 
       <div className="max-w-7xl mx-auto px-4 py-8">

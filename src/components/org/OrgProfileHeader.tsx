@@ -1,4 +1,4 @@
-import { Building2, CheckCircle, MapPin, ExternalLink, Copy } from "lucide-react";
+import { Building2, CheckCircle, MapPin, ExternalLink, Copy, Heart } from "lucide-react";
 import { toast } from "sonner";
 import type { OrgFull, OrgFinancials } from "@/types/claro";
 import { SNOWTRACE_URL, truncateAddress } from "@/lib/constants";
@@ -6,9 +6,10 @@ import { SNOWTRACE_URL, truncateAddress } from "@/lib/constants";
 interface Props {
   org: OrgFull;
   financials: OrgFinancials | null | undefined;
+  onDonate?: () => void;
 }
 
-export default function OrgProfileHeader({ org }: Props) {
+export default function OrgProfileHeader({ org, onDonate }: Props) {
   const orgType = org.org_type
     ? org.org_type.charAt(0).toUpperCase() + org.org_type.slice(1)
     : null;
@@ -33,33 +34,47 @@ export default function OrgProfileHeader({ org }: Props) {
       {/* Header content */}
       <div className="bg-white border-b border-gray-200">
         <div className="max-w-7xl mx-auto px-4 pb-6">
-          <div className="relative -mt-12 flex items-end gap-4">
-            {/* Logo */}
-            <div className="w-16 h-16 md:w-24 md:h-24 rounded-full border-4 border-white shadow-lg bg-white flex items-center justify-center overflow-hidden shrink-0">
-              {org.logo_url ? (
-                <img src={org.logo_url} alt={org.name} className="w-full h-full object-cover rounded-full" />
-              ) : (
-                <Building2 className="text-gray-300" style={{ width: 40, height: 40 }} />
+          {/* Logo + Name row */}
+          <div className="relative -mt-10 md:-mt-12">
+            <div className="flex items-end gap-3">
+              <div className="w-16 h-16 md:w-24 md:h-24 rounded-full border-4 border-white shadow-lg bg-white flex items-center justify-center overflow-hidden shrink-0">
+                {org.logo_url ? (
+                  <img src={org.logo_url} alt={org.name} className="w-full h-full object-cover rounded-full" />
+                ) : (
+                  <Building2 className="text-gray-300" style={{ width: 40, height: 40 }} />
+                )}
+              </div>
+
+              {/* Donate button aligned right on mobile, next to logo */}
+              {onDonate && (
+                <div className="ml-auto pt-12 md:pt-0">
+                  <button
+                    onClick={onDonate}
+                    className="bg-[#1A56DB] text-white rounded-md px-4 py-2 text-sm font-medium flex items-center gap-2 hover:bg-[#1A56DB]/90 active:scale-[0.97] transition-all"
+                  >
+                    <Heart style={{ width: 14, height: 14 }} /> Donate
+                  </button>
+                </div>
               )}
             </div>
 
-            {/* Name + badges */}
-            <div className="flex-1 pt-14 md:pt-0 md:ml-4">
-              <div className="flex items-center gap-3 flex-wrap">
+            {/* Name + badges below logo on mobile */}
+            <div className="mt-3">
+              <div className="flex items-center gap-2 flex-wrap">
                 <h1 className="text-xl md:text-2xl font-bold text-gray-900">{org.name}</h1>
                 {org.verified ? (
-                  <span className="bg-green-50 border border-green-200 text-green-700 text-xs px-3 py-1 rounded-full flex items-center gap-1">
+                  <span className="bg-green-50 border border-green-200 text-green-700 text-xs px-2.5 py-0.5 rounded-full flex items-center gap-1">
                     <CheckCircle style={{ width: 12, height: 12 }} />
                     Verified
                   </span>
                 ) : (
-                  <span className="bg-gray-100 border border-gray-200 text-gray-500 text-xs px-3 py-1 rounded-full">
+                  <span className="bg-gray-100 border border-gray-200 text-gray-500 text-xs px-2.5 py-0.5 rounded-full">
                     Pending verification
                   </span>
                 )}
               </div>
 
-              <div className="flex items-center gap-4 mt-1 text-sm text-gray-500">
+              <div className="flex items-center gap-3 mt-1 text-sm text-gray-500 flex-wrap">
                 <span className="flex items-center gap-1">
                   <MapPin style={{ width: 12, height: 12 }} />
                   {org.country}
@@ -75,7 +90,7 @@ export default function OrgProfileHeader({ org }: Props) {
           </div>
 
           {org.description && (
-            <p className="mt-4 max-w-3xl text-sm text-gray-700 leading-relaxed">{org.description}</p>
+            <p className="mt-3 text-sm text-gray-700 leading-relaxed">{org.description}</p>
           )}
 
           {/* Actions */}
