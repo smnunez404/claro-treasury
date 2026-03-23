@@ -13,10 +13,10 @@ export function useTreasuryAnalytics(orgContract: string) {
       const [txRes, donationsRes] = await Promise.all([
         supabase
           .from("claro_transactions")
-          .select("tx_type, amount_usd, block_timestamp")
+          .select("tx_type, amount_usd, block_timestamp, created_at")
           .eq("org_contract", orgContract.toLowerCase())
-          .gte("block_timestamp", thirtyDaysAgo)
-          .order("block_timestamp", { ascending: true }),
+          .or(`block_timestamp.gte.${thirtyDaysAgo},and(block_timestamp.is.null,created_at.gte.${thirtyDaysAgo})`)
+          .order("block_timestamp", { ascending: true, nullsFirst: false }),
         supabase
           .from("claro_donations")
           .select("donor_address")
@@ -32,8 +32,9 @@ export function useTreasuryAnalytics(orgContract: string) {
 
       const volumeMap = new Map<string, { income_usd: number; expense_usd: number }>();
       for (const tx of txs) {
-        if (!tx.block_timestamp) continue;
-        const date = tx.block_timestamp.slice(0, 10);
+        const ts = tx.block_timestamp ?? tx.created_at;
+        if (!ts) continue;
+        const date = ts.slice(0, 10);
         const existing = volumeMap.get(date) ?? { income_usd: 0, expense_usd: 0 };
         const amount = Number(tx.amount_usd) || 0;
         if (INCOME_TYPES.includes(tx.tx_type ?? "")) {
