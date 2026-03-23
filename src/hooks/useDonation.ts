@@ -74,6 +74,13 @@ export function useDonation() {
         console.error("log-donation Edge Function failed (non-blocking):", logError);
       }
 
+      // Invalidate relevant queries so cards/stats refresh
+      queryClient.invalidateQueries({ queryKey: ["explore-orgs"] });
+      queryClient.invalidateQueries({ queryKey: ["explore-orgs-meta"] });
+      queryClient.invalidateQueries({ queryKey: ["protocol-stats"] });
+      queryClient.invalidateQueries({ queryKey: ["org-profile"] });
+      queryClient.invalidateQueries({ queryKey: ["treasury"] });
+
       setStep("success");
     } catch (err: unknown) {
       const message = err instanceof Error ? err.message : "Transaction failed";
