@@ -11,6 +11,11 @@ function formatTimeRemaining(seconds: number): string {
   return `${m}m remaining`;
 }
 
+/** Strip leading "$" if present so we can format consistently */
+function stripDollar(v: string): string {
+  return v.startsWith("$") ? v.slice(1) : v;
+}
+
 // Support both legacy props (from GrantsPage) and new props (from useQFRound)
 interface LegacyProps {
   qfRound: QFRoundFull | null;
@@ -37,7 +42,7 @@ export default function QFRoundCard(props: Props) {
     return <div className="bg-white border border-gray-200 rounded-xl h-32 animate-pulse" />;
   }
 
-  // Normalize to common shape
+  // Normalize to common shape (all USD values are raw numbers, no "$" prefix)
   let active = false;
   let matchingPoolUsd = "0.00";
   let timeLabel = "";
@@ -45,10 +50,9 @@ export default function QFRoundCard(props: Props) {
   let projectRows: { id: string; name: string; donors: number; raised: string; match: string }[] = [];
 
   if ("qfRound" in props && props.qfRound) {
-    // Legacy path
     const qf = props.qfRound;
     active = qf.isActive;
-    matchingPoolUsd = qf.matchingPoolUsd;
+    matchingPoolUsd = stripDollar(qf.matchingPoolUsd);
     timeLabel = `${qf.hoursRemaining}h ${qf.minutesRemaining}m remaining`;
     projectCount = qf.projects.length;
     const grantNameMap = new Map((props.orgGrants ?? []).map((g) => [g.projectId, g.projectName]));
@@ -56,11 +60,10 @@ export default function QFRoundCard(props: Props) {
       id: s.projectId,
       name: grantNameMap.get(s.projectId) ?? s.projectName,
       donors: s.uniqueDonors,
-      raised: s.totalContribUsd,
-      match: s.projectedMatchingUsd,
+      raised: stripDollar(s.totalContribUsd),
+      match: stripDollar(s.projectedMatchingUsd),
     }));
   } else if ("round" in props && props.round) {
-    // New path
     const r = props.round;
     active = r.active;
     matchingPoolUsd = r.matchingPoolUsd.toFixed(2);
@@ -90,7 +93,7 @@ export default function QFRoundCard(props: Props) {
 
   return (
     <div className="bg-white border border-gray-200 rounded-xl p-5 shadow-sm">
-      <div className="flex items-center justify-between mb-4">
+      <div className="flex items-center justify-between mb-4 flex-wrap gap-2">
         <div className="flex items-center gap-2">
           <div className="bg-[#057A55] w-2 h-2 rounded-full animate-pulse" />
           <p className="text-base font-semibold text-gray-900">Quadratic Funding Round</p>
@@ -101,7 +104,7 @@ export default function QFRoundCard(props: Props) {
         </span>
       </div>
 
-      <div className="bg-gradient-to-r from-[#0A0E1A] to-[#1A56DB] rounded-xl p-4 mb-4 flex items-center justify-between">
+      <div className="bg-gradient-to-r from-[#0A0E1A] to-[#1A56DB] rounded-xl p-4 mb-4 flex items-center justify-between flex-wrap gap-2">
         <div>
           <p className="text-blue-200 text-xs uppercase">Matching Pool</p>
           <p className="text-white text-2xl font-bold">${matchingPoolUsd}</p>
