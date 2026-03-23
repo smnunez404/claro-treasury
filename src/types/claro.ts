@@ -384,3 +384,21 @@ export interface AuditStats {
   totalVerified: number;
   totalUsd: number;
 }
+
+export interface ProtocolFullStats {
+  totalOrgs: number;
+  verifiedOrgs: number;
+  pendingOrgs: number;
+  countries: string[];
+  totalRaisedUsd: number;
+  totalDisbursedUsd: number;
+  totalTransactions: number;
+  uniqueDonors: number;
+  activeProjects: number;
+  hypercertsMinted: number;
+  reportsGenerated: number;
+  auditEntries: number;
+  qfRoundActive: boolean;
+  qfMatchingPool: number;
+  dailyVolume: { date: string; amount_usd: number; count: number }[];
+}

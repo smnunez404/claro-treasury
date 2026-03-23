@@ -9,6 +9,7 @@ const ExplorePage = React.lazy(() => import("@/pages/ExplorePage"));
 const RegisterPage = React.lazy(() => import("@/pages/RegisterPage"));
 const OrgProfilePage = React.lazy(() => import("@/pages/OrgProfilePage"));
 const AuditPage = React.lazy(() => import("@/pages/AuditPage"));
+const StatsPage = React.lazy(() => import("@/pages/StatsPage"));
 
 function SmartRedirect() {
   const { role, isLoading } = useAuth();
