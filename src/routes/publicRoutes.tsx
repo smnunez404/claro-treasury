@@ -66,6 +66,14 @@ export const publicRoutes: RouteObject[] = [
           </Suspense>
         ),
       },
+      {
+        path: "hypercert/:txHash",
+        element: (
+          <Suspense fallback={<PageLoader />}>
+            <HypercertPage />
+          </Suspense>
+        ),
+      },
     ],
   },
 ];
