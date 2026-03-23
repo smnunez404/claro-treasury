@@ -238,7 +238,7 @@ export default function ExplorePage() {
                           QF Round Active
                         </span>
                         <button
-                          onClick={() => setContributeTarget(orgQfProjects[0])}
+                          onClick={() => setContributeTargets(orgQfProjects)}
                           className="bg-amber-500 text-white text-xs px-3 py-1 rounded-md hover:bg-amber-600 transition-colors"
                         >
                           Contribute
