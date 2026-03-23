@@ -10,6 +10,7 @@ const RegisterPage = React.lazy(() => import("@/pages/RegisterPage"));
 const OrgProfilePage = React.lazy(() => import("@/pages/OrgProfilePage"));
 const AuditPage = React.lazy(() => import("@/pages/AuditPage"));
 const StatsPage = React.lazy(() => import("@/pages/StatsPage"));
+const HypercertPage = React.lazy(() => import("@/pages/HypercertPage"));
 
 function SmartRedirect() {
   const { role, isLoading } = useAuth();
@@ -62,6 +63,14 @@ export const publicRoutes: RouteObject[] = [
         element: (
           <Suspense fallback={<PageLoader />}>
             <StatsPage />
+          </Suspense>
+        ),
+      },
+      {
+        path: "hypercert/:txHash",
+        element: (
+          <Suspense fallback={<PageLoader />}>
+            <HypercertPage />
           </Suspense>
         ),
       },

@@ -1,3 +1,4 @@
+import { Link } from "react-router-dom";
 import { Award, ExternalLink, Target } from "lucide-react";
 import { formatUsd } from "@/lib/constants";
 import type { Project } from "@/types/claro";
@@ -33,17 +34,15 @@ export default function ProjectCard({ project }: Props) {
                 <Award size={10} />
                 Certified
               </span>
-              <a
-                href={`https://sepolia.basescan.org/tx/${project.hypercert_tx_hash}`}
-                target="_blank"
-                rel="noopener noreferrer"
+              <Link
+                to={`/hypercert/${project.hypercert_tx_hash}`}
                 onClick={(e) => e.stopPropagation()}
                 className="inline-flex items-center gap-1 bg-amber-50 border border-amber-200 text-amber-700 text-xs px-2 py-0.5 rounded-full hover:bg-amber-100 transition-colors"
-                title="Impact certified on Base Sepolia · Click to verify"
+                title="Impact certified on Base Sepolia · Click to view certificate"
               >
                 <Award size={10} />
                 View Certificate
-              </a>
+              </Link>
             </>
           )}
         </div>

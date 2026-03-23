@@ -1,4 +1,5 @@
 import { useState } from "react";
+import { Link } from "react-router-dom";
 import { Award, CheckCircle2, ExternalLink, Info, Loader2, XCircle } from "lucide-react";
 import { useQuery, useQueryClient } from "@tanstack/react-query";
 import { ethers } from "ethers";
@@ -228,15 +229,24 @@ export default function HypercertPanel({ grants, orgContract }: Props) {
                   <CheckCircle2 className="text-[#057A55]" style={{ width: 14, height: 14 }} />
                   <span className="text-sm font-medium text-gray-900">{project.name}</span>
                 </div>
-                <a
-                  href={`https://sepolia.basescan.org/tx/${project.hypercert_tx_hash}`}
-                  target="_blank"
-                  rel="noopener noreferrer"
-                  className="text-xs text-[#1A56DB] flex items-center gap-1 hover:underline"
-                >
-                  View on Basescan
-                  <ExternalLink style={{ width: 10, height: 10 }} />
-                </a>
+                <div className="flex items-center gap-3">
+                  <Link
+                    to={`/hypercert/${project.hypercert_tx_hash}`}
+                    className="text-xs text-[#1A56DB] flex items-center gap-1 hover:underline"
+                  >
+                    <Award style={{ width: 10, height: 10 }} />
+                    View Certificate
+                  </Link>
+                  <a
+                    href={`https://sepolia.basescan.org/tx/${project.hypercert_tx_hash}`}
+                    target="_blank"
+                    rel="noopener noreferrer"
+                    className="text-xs text-[#1A56DB] flex items-center gap-1 hover:underline"
+                  >
+                    View on Basescan
+                    <ExternalLink style={{ width: 10, height: 10 }} />
+                  </a>
+                </div>
               </div>
             ))}
           </div>
