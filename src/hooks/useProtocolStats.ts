@@ -5,9 +5,10 @@ import { MATCHING_ADDRESS, RPC_URL, AVAX_TO_USD } from "@/lib/constants";
 import { supabase } from "@/lib/supabaseClient";
 import type { ProtocolFullStats } from "@/types/claro";
 
-export function useProtocolStats() {
-  const { data: stats, isLoading, isError } = useQuery<ProtocolFullStats>({
-    queryKey: ["protocol-stats"],
+/** Supabase-only stats — fast, no blockchain dependency */
+function useSupabaseStats() {
+  return useQuery({
+    queryKey: ["protocol-stats-supabase"],
     staleTime: 2 * 60 * 1000,
     queryFn: async () => {
       const [orgsRes, txRes, donationsRes, projectsRes, reportsRes, auditRes, dailyRes] =
@@ -89,26 +90,6 @@ export function useProtocolStats() {
         dailyVolume.push({ date: dateStr, ...entry });
       }
 
-      let qfRoundActive = false;
-      let qfMatchingPool = 0;
-      try {
-        const provider = new ethers.JsonRpcProvider(RPC_URL);
-        const matching = new ethers.Contract(
-          MATCHING_ADDRESS,
-          CLARO_MATCHING_ABI,
-          provider
-        );
-        const currentId = await matching.currentRoundId();
-        const round = await matching.getRound(currentId);
-        qfRoundActive =
-          round && Number(round.endTime) > Math.floor(Date.now() / 1000);
-        qfMatchingPool = Number(
-          ethers.formatEther(round?.matchingPool ?? 0n)
-        );
-      } catch {
-        /* silent fail */
-      }
-
       return {
         totalOrgs: orgs.length,
         verifiedOrgs: orgs.filter((o) => o.verified).length,
@@ -122,12 +103,62 @@ export function useProtocolStats() {
         hypercertsMinted,
         reportsGenerated: reportsRes.count ?? 0,
         auditEntries: auditRes.count ?? 0,
-        qfRoundActive,
-        qfMatchingPool,
         dailyVolume,
+        // defaults — will be overridden by QF query
+        qfRoundActive: false,
+        qfMatchingPool: 0,
       } satisfies ProtocolFullStats;
     },
   });
+}
 
-  return { stats, isLoading, isError };
+/** QF round data from blockchain — slow, isolated so it never blocks rendering */
+function useQfRound() {
+  return useQuery({
+    queryKey: ["protocol-qf-round"],
+    staleTime: 5 * 60 * 1000,
+    retry: 0,
+    queryFn: async () => {
+      const controller = new AbortController();
+      const timeout = setTimeout(() => controller.abort(), 3000);
+
+      try {
+        const provider = new ethers.JsonRpcProvider(RPC_URL, undefined, {
+          staticNetwork: true,
+        });
+        const matching = new ethers.Contract(
+          MATCHING_ADDRESS,
+          CLARO_MATCHING_ABI,
+          provider
+        );
+        const currentId = await matching.currentRoundId();
+        const round = await matching.getRound(currentId);
+        clearTimeout(timeout);
+
+        const active =
+          round && Number(round.endTime) > Math.floor(Date.now() / 1000);
+        const pool = Number(ethers.formatEther(round?.matchingPool ?? 0n));
+        return { qfRoundActive: active, qfMatchingPool: pool };
+      } catch {
+        clearTimeout(timeout);
+        return { qfRoundActive: false, qfMatchingPool: 0 };
+      }
+    },
+  });
+}
+
+export function useProtocolStats() {
+  const { data: supabaseStats, isLoading: isLoadingDb, isError } = useSupabaseStats();
+  const { data: qfData } = useQfRound();
+
+  // Merge: show Supabase data immediately, overlay QF when ready
+  const stats: ProtocolFullStats | undefined = supabaseStats
+    ? {
+        ...supabaseStats,
+        qfRoundActive: qfData?.qfRoundActive ?? false,
+        qfMatchingPool: qfData?.qfMatchingPool ?? 0,
+      }
+    : undefined;
+
+  return { stats, isLoading: isLoadingDb, isError };
 }
