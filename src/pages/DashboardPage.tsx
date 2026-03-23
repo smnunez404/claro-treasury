@@ -10,6 +10,7 @@ import GrantsList from "@/components/dashboard/GrantsList";
 import DashboardQFCard from "@/components/dashboard/DashboardQFCard";
 import OnramperModal from "@/components/dashboard/OnramperModal";
 import DashboardSkeleton from "@/components/dashboard/DashboardSkeleton";
+import TreasuryAnalytics from "@/components/dashboard/TreasuryAnalytics";
 
 export default function DashboardPage() {
   const { orgContractAddress, address } = useAuth();
