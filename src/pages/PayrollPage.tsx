@@ -47,15 +47,15 @@ export default function PayrollPage() {
   if (isTreasuryLoading) return <PayrollSkeleton />;
 
   return (
-    <div className="bg-background min-h-screen">
-      <div className="px-4 pt-6 pb-2 md:px-8 flex items-start justify-between">
+    <div>
+      <div className="flex flex-col gap-3 sm:flex-row sm:items-start sm:justify-between">
         <div>
           <h1 className="text-2xl font-semibold text-foreground">Payroll</h1>
           <p className="text-sm text-muted-foreground mt-1">On-chain salary management</p>
         </div>
         <button
           onClick={() => setAddSheetOpen(true)}
-          className="bg-[hsl(224,76%,48%)] text-white text-sm px-4 py-2 rounded-md flex items-center gap-2 hover:opacity-90 transition-opacity active:scale-[0.97]"
+          className="w-full sm:w-auto bg-primary text-primary-foreground text-sm px-4 py-2 rounded-md flex items-center justify-center gap-2 hover:opacity-90 transition-opacity active:scale-[0.97]"
         >
           <UserPlus style={{ width: 14, height: 14 }} />
           Add Employee
