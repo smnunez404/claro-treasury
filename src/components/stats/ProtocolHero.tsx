@@ -27,7 +27,7 @@ export default function ProtocolHero({ stats }: Props) {
     {
       icon: Globe,
       color: "text-[#1A56DB]",
-      value: stats?.countries.length ?? 0,
+      value: (stats?.countries ?? []).length,
       label: "Countries",
       sub:
         (stats?.countries ?? []).length > 3
