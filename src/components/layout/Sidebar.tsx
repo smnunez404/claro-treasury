@@ -13,6 +13,7 @@ import {
   Building2,
   MapPin,
   LogOut,
+  ShieldCheck,
 } from "lucide-react";
 
 const orgOwnerItems = [
