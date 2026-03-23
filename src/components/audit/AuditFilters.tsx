@@ -96,7 +96,7 @@ export default function AuditFilters({ filters, onChange }: Props) {
           <button
             onClick={() => {
               setOrgInput("");
-              onChange({ orgContract: "", actionType: "", dateFrom: "", dateTo: "" });
+              onChange({ orgContract: "", actionType: "exclude_sync", dateFrom: "", dateTo: "" });
             }}
             className="text-xs text-gray-500 hover:text-gray-700 flex items-center gap-1 pb-2"
           >
