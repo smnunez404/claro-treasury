@@ -1,4 +1,4 @@
-import { useState } from "react";
+import { useState, useMemo } from "react";
 import { Sparkles, Loader2 } from "lucide-react";
 import { useQueryClient } from "@tanstack/react-query";
 import type { AIReport } from "@/types/claro";
@@ -12,10 +12,38 @@ interface Props {
 
 type GenState = "idle" | "loading" | "success" | "error";
 
+/** Lightweight markdown-to-HTML for Gemini output (bold, italic, headings, links, lists, paragraphs) */
+function renderMarkdown(text: string): string {
+  return text
+    // Headings
+    .replace(/^### (.+)$/gm, '<h4 class="font-semibold text-gray-900 mt-3 mb-1 text-sm">$1</h4>')
+    .replace(/^## (.+)$/gm, '<h3 class="font-semibold text-gray-900 mt-4 mb-1 text-sm">$1</h3>')
+    .replace(/^# (.+)$/gm, '<h3 class="font-bold text-gray-900 mt-4 mb-2 text-base">$1</h3>')
+    // Bold + italic
+    .replace(/\*\*\*(.+?)\*\*\*/g, '<strong><em>$1</em></strong>')
+    .replace(/\*\*(.+?)\*\*/g, '<strong>$1</strong>')
+    .replace(/\*(.+?)\*/g, '<em>$1</em>')
+    // Links
+    .replace(/\[([^\]]+)\]\(([^)]+)\)/g, '<a href="$2" target="_blank" rel="noopener noreferrer" class="text-[#1A56DB] hover:underline break-all">$1</a>')
+    // Bare URLs
+    .replace(/(^|[^"'])(https?:\/\/[^\s<]+)/g, '$1<a href="$2" target="_blank" rel="noopener noreferrer" class="text-[#1A56DB] hover:underline break-all">$2</a>')
+    // Unordered list items
+    .replace(/^[-*] (.+)$/gm, '<li class="ml-4 list-disc">$1</li>')
+    // Paragraphs (double newline)
+    .replace(/\n\n+/g, '</p><p class="mt-2">')
+    // Single newlines within paragraphs
+    .replace(/\n/g, '<br/>');
+}
+
 export default function AIReportSection({ report, isLoading, orgContract }: Props) {
   const [genState, setGenState] = useState<GenState>("idle");
   const [expanded, setExpanded] = useState(false);
   const queryClient = useQueryClient();
+
+  const reportHtml = useMemo(() => {
+    if (!report?.report_text) return "";
+    return renderMarkdown(report.report_text);
+  }, [report?.report_text]);
 
   const generate = async () => {
     setGenState("loading");
@@ -39,10 +67,10 @@ export default function AIReportSection({ report, isLoading, orgContract }: Prop
   };
 
   return (
-    <div className="bg-white border border-gray-200 rounded-xl p-6 shadow-sm">
+    <div className="bg-white border border-gray-200 rounded-xl p-4 sm:p-6 shadow-sm overflow-hidden">
       <div className="flex flex-col gap-1 sm:flex-row sm:items-center sm:justify-between mb-4">
         <div className="flex items-center gap-2">
-          <Sparkles className="text-[#E3A008]" style={{ width: 20, height: 20 }} />
+          <Sparkles className="text-[#E3A008] shrink-0" style={{ width: 20, height: 20 }} />
           <span className="text-sm font-semibold text-gray-900">AI Transparency Report</span>
         </div>
         {report && (
@@ -60,10 +88,11 @@ export default function AIReportSection({ report, isLoading, orgContract }: Prop
           <p className="text-xs text-gray-400 mt-1">Generate an AI transparency report powered by Gemini 2.0 Flash.</p>
         </div>
       ) : (
-        <div>
-          <p className={`text-sm text-gray-700 leading-relaxed whitespace-pre-wrap ${expanded ? "" : "line-clamp-6"}`}>
-            {report.report_text}
-          </p>
+        <div className="min-w-0">
+          <div
+            className={`text-sm text-gray-700 leading-relaxed break-words overflow-wrap-anywhere ${expanded ? "" : "line-clamp-6"}`}
+            dangerouslySetInnerHTML={{ __html: reportHtml }}
+          />
           <button
             onClick={() => setExpanded(!expanded)}
             className="text-xs text-[#1A56DB] mt-2 hover:underline"
