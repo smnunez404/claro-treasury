@@ -223,7 +223,11 @@ export default function CreateQFRoundModal({ isOpen, onClose, orgs }: Props) {
         {step === "confirming" && (
           <div className="flex flex-col items-center py-8">
             <Loader2 className="animate-spin text-[#1A56DB]" style={{ width: 32, height: 32 }} />
-            <p className="text-sm text-gray-700 mt-3 text-center">Creating QF Round...</p>
+            <p className="text-sm text-gray-700 mt-3 text-center">
+              {confirmSubStep === 1
+                ? "Step 1 of 2: Creating round structure..."
+                : "Step 2 of 2: Funding matching pool..."}
+            </p>
             <p className="text-xs text-gray-400 mt-1 text-center">Please confirm in your wallet.</p>
             <p className="text-xs text-gray-500 mt-2 text-center">
               {selectedProjectIds.length} projects · {durationHours}h · {matchingPoolAvax} AVAX pool
