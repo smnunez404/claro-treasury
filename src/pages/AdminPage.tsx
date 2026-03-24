@@ -52,27 +52,30 @@ export default function AdminPage() {
           <p className="text-sm text-gray-500 mt-1">CLARO Protocol Admin</p>
         </div>
 
-        <div className="flex items-center gap-3">
+        <div className="flex flex-wrap items-center gap-2">
           <button
             onClick={() => setCreateRoundOpen(true)}
-            className="bg-[#1A56DB] text-white text-sm px-4 py-2 rounded-md flex items-center gap-2 hover:bg-[#1A56DB]/90 active:scale-[0.97] transition-all"
+            className="bg-[#1A56DB] text-white text-sm px-3 py-2 rounded-md flex items-center gap-1.5 hover:bg-[#1A56DB]/90 active:scale-[0.97] transition-all"
           >
             <Zap style={{ width: 14, height: 14 }} />
-            Create QF Round
+            <span className="hidden sm:inline">Create QF Round</span>
+            <span className="sm:hidden">QF Round</span>
           </button>
 
           <button
             onClick={syncOrganizations}
             disabled={isSyncing}
-            className="border border-gray-300 bg-white text-gray-700 hover:bg-gray-50 rounded-md px-4 py-2 text-sm flex items-center gap-2 active:scale-[0.97] transition-all disabled:opacity-50"
+            className="border border-gray-300 bg-white text-gray-700 hover:bg-gray-50 rounded-md px-3 py-2 text-sm flex items-center gap-1.5 active:scale-[0.97] transition-all disabled:opacity-50"
           >
             <RefreshCw size={14} className={isSyncing ? "animate-spin" : ""} />
-            {isSyncing ? "Syncing..." : "Sync Blockchain"}
+            <span className="hidden sm:inline">{isSyncing ? "Syncing..." : "Sync Blockchain"}</span>
+            <span className="sm:hidden">{isSyncing ? "Sync..." : "Sync"}</span>
           </button>
 
-          <div className="bg-[#0A0E1A] text-white text-xs px-3 py-2 rounded-md flex items-center gap-2">
+          <div className="bg-[#0A0E1A] text-white text-xs px-2.5 py-2 rounded-md flex items-center gap-1.5">
             <ShieldCheck size={14} className="text-[#1A56DB]" />
-            Protocol Admin
+            <span className="hidden sm:inline">Protocol Admin</span>
+            <span className="sm:hidden">Admin</span>
           </div>
         </div>
       </div>
