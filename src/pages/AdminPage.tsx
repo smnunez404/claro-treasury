@@ -1,12 +1,16 @@
 import { useState } from "react";
 import { RefreshCw, ShieldCheck, Zap } from "lucide-react";
 import { useAdmin } from "@/hooks/useAdmin";
+import { useQFAdmin } from "@/hooks/useQFAdmin";
 import AdminStatsBar from "@/components/admin/AdminStatsBar";
 import OrgAdminTable from "@/components/admin/OrgAdminTable";
 import VerifyOrgModal from "@/components/admin/VerifyOrgModal";
 import AdminSkeleton from "@/components/admin/AdminSkeleton";
 import CreateQFRoundModal from "@/components/admin/CreateQFRoundModal";
-import type { AdminOrgRow } from "@/types/claro";
+import QFRoundStatus from "@/components/admin/QFRoundStatus";
+import QFRoundHistory from "@/components/admin/QFRoundHistory";
+import DistributeModal from "@/components/admin/DistributeModal";
+import type { AdminOrgRow, QFAdminRound } from "@/types/claro";
 
 export default function AdminPage() {
   const {
@@ -23,8 +27,19 @@ export default function AdminPage() {
     syncOrganizations,
   } = useAdmin();
 
+  const {
+    rounds,
+    activeRound,
+    isLoading: isQFLoading,
+    distributeStep,
+    distributeError,
+    distribute,
+    resetDistribute,
+  } = useQFAdmin();
+
   const [verifyTarget, setVerifyTarget] = useState<AdminOrgRow | null>(null);
   const [createRoundOpen, setCreateRoundOpen] = useState(false);
+  const [distributeTarget, setDistributeTarget] = useState<QFAdminRound | null>(null);
 
   if (isOrgsLoading) return <AdminSkeleton />;
 
@@ -66,6 +81,35 @@ export default function AdminPage() {
       <div className="px-4 pb-8 md:px-8 space-y-6 mt-4">
         <AdminStatsBar stats={globalStats} isLoading={isStatsLoading} />
 
+        {/* QF Rounds Section */}
+        <div className="space-y-4">
+          <div className="px-1">
+            <div>
+              <h2 className="text-lg font-semibold text-gray-900">Quadratic Funding</h2>
+              <p className="text-sm text-gray-500 mt-0.5">
+                Manage QF rounds and distribute matching pools
+              </p>
+            </div>
+          </div>
+
+          <div className="grid grid-cols-1 lg:grid-cols-3 gap-4">
+            <div className="lg:col-span-2">
+              <QFRoundStatus
+                round={activeRound}
+                isLoading={isQFLoading}
+                onDistribute={(round) => setDistributeTarget(round)}
+              />
+            </div>
+            <div className="lg:col-span-1">
+              <QFRoundHistory
+                rounds={rounds}
+                isLoading={isQFLoading}
+                onDistribute={(round) => setDistributeTarget(round)}
+              />
+            </div>
+          </div>
+        </div>
+
         <OrgAdminTable
           orgs={orgs ?? []}
           isLoading={isOrgsLoading}
@@ -94,6 +138,22 @@ export default function AdminPage() {
         isOpen={createRoundOpen}
         onClose={() => setCreateRoundOpen(false)}
         orgs={orgs ?? []}
+      />
+
+      <DistributeModal
+        round={distributeTarget}
+        isOpen={distributeTarget !== null}
+        onClose={() => {
+          setDistributeTarget(null);
+          resetDistribute();
+        }}
+        distributeStep={distributeStep}
+        distributeError={distributeError}
+        onConfirm={() => distribute(distributeTarget!.roundId)}
+        onSuccess={() => {
+          setDistributeTarget(null);
+          resetDistribute();
+        }}
       />
     </div>
   );
