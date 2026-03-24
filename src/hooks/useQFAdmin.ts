@@ -78,7 +78,8 @@ export function useQFAdmin() {
       if (!wallet) throw new Error("No wallet connected");
 
       await wallet.switchChain(CHAIN_ID);
-      const provider = (await wallet.getEthersProvider()) as unknown as ethers.BrowserProvider;
+      const ethProvider = await wallet.getEthereumProvider();
+      const provider = new ethers.BrowserProvider(ethProvider);
       const signer = await provider.getSigner();
 
       const matching = new ethers.Contract(MATCHING_ADDRESS, CLARO_MATCHING_ABI, signer);
