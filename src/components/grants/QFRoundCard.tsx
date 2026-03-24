@@ -1,15 +1,6 @@
 import { Clock, Layers, Info, Users, TrendingUp } from "lucide-react";
+import { formatTimeRemaining } from "@/lib/utils";
 import type { QFRoundFull, GrantFull, QFRoundFull2, QFProjectData } from "@/types/claro";
-
-function formatTimeRemaining(seconds: number): string {
-  if (seconds <= 0) return "Round ended";
-  const d = Math.floor(seconds / 86400);
-  const h = Math.floor((seconds % 86400) / 3600);
-  const m = Math.floor((seconds % 3600) / 60);
-  if (d > 0) return `${d}d ${h}h remaining`;
-  if (h > 0) return `${h}h ${m}m remaining`;
-  return `${m}m remaining`;
-}
 
 /** Strip leading "$" if present so we can format consistently */
 function stripDollar(v: string): string {

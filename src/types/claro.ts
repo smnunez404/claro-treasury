@@ -451,6 +451,22 @@ export type CreateRoundStep = "idle" | "confirming" | "success" | "error";
 
 export type ContributeStep = "idle" | "amount" | "confirming" | "success" | "error";
 
+export interface QFAdminRound {
+  roundId: number;
+  startTime: number;
+  endTime: number;
+  matchingPoolAvax: number;
+  matchingPoolUsd: number;
+  distributed: boolean;
+  active: boolean;
+  projectIds: string[];
+  timeRemainingSeconds: number;
+  hasEnded: boolean;
+  canDistribute: boolean;
+}
+
+export type DistributeStep = "idle" | "confirming" | "success" | "error";
+
 export interface HypercertData {
   txHash: string;
   certifiedAt: string | null;
